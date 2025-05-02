@@ -1,0 +1,3332 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[    131322,       3324]
+NotebookOptionsPosition[    107486,       3026]
+NotebookOutlinePosition[    108059,       3047]
+CellTagsIndexPosition[    108016,       3044]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["\<\
+Welcome to an overview tutorial session on xTensor. In this tutorial, I want \
+to demonstrate the power of xTensor to you. I\[CloseCurlyQuote]ll do so by \
+showing you how I solved some problems in my own research.
+
+I\[CloseCurlyQuote]ve divided this into five separate categories. They are as \
+follows:
+
+1) Lovelock tensors are vanishing (basic tensor manipulation)
+2) Perturbation theory to arbitrary order in scalar/tensor theories \
+(perturbations)
+3) Calculation of equations of motion from an action (utilising previously \
+developed information)
+4) Casting equations in coordinates, perturbation theory in coordinates \
+(using a coordinate basis)
+5) High order perturbation theory in arbitrary gauges about FRW (xPand)
+
+This isn\[CloseCurlyQuote]t meant to be a pedagogical introduction to the \
+package. I\[CloseCurlyQuote]ll write some notes to explain what I\
+\[CloseCurlyQuote]m doing, but for details, you should look at the \
+documentation.
+
+Please feel free to contact me at jkb84@cornell.edu if you have any comments \
+on this notebook. xTensor has a very active forum at \
+http://groups.google.com/group/xAct/ where you can get help with any \
+questions you might have, typically within 24 hours.
+
+I am not an author of any part of xTensor. However, it has revolutionized my \
+research work, and I want to share it with you.
+
+Jolyon Bloomfield
+July 2013\
+\>", "Text",ExpressionUUID->"f2b83a7b-442a-4125-b5ab-38e4a67960b4"],
+
+Cell[CellGroupData[{
+
+Cell["Installation", "Section",ExpressionUUID->"fa3231f8-87a1-4fa6-b971-00846ca75a42"],
+
+Cell["\<\
+xTensor needs to be installed before using this notebook. You can download it \
+from http://www.xact.es/xTensor/index.html. I\[CloseCurlyQuote]ve had success \
+in installing it on windows and linux without any problems whatsoever; I \
+understand that some mac people have had issues though. This notebook also \
+uses the xPand package for cosmological perturbation theory.\
+\>", "Text",ExpressionUUID->"e29ed6be-d654-405d-b1d7-f63e4dcb1a12"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Part 1. Tensor Manipulation", "Section",ExpressionUUID->"cf40bfc4-6cc7-476b-961f-fef39a9e8341"],
+
+Cell["\<\
+In this section, I\[CloseCurlyQuote]m going to introduce xTensor, and use it \
+to demonstrate that the Lovelock tensor vanishes in four dimensions.\
+\>", "Text",ExpressionUUID->"0a4d3352-3466-4371-ad59-e7e8c9d79fd9"],
+
+Cell["Load the package.", "Text",ExpressionUUID->"8a5f6a8f-bc33-41e9-b89b-96d39050678a"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"<<", "xAct`xTensor`"}]], "Input",
+ CellLabel->"In[1]:=",ExpressionUUID->"1e8be33f-c907-4eef-9624-9ab43c5a42cd"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox["\<\"------------------------------------------------------------\"\>\
+", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"d576e10e-2f0b-496e-b71e-9a6bf2934630"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"Package xAct`xPerm`  version \"\>", 
+    "\[InvisibleSpace]", "\<\"1.2.3\"\>", "\[InvisibleSpace]", "\<\", \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"{", 
+     RowBox[{"2015", ",", "8", ",", "23"}], "}"}]}],
+   SequenceForm["Package xAct`xPerm`  version ", "1.2.3", ", ", {2015, 8, 23}],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"b799d92d-4e48-4fef-8359-f29dd9c8b2ff"],
+
+Cell[BoxData[
+ FormBox["\<\"CopyRight (C) 2003-2020, Jose M. Martin-Garcia, under the \
+General Public License.\"\>", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"370ec5b4-e846-4aad-b6aa-ff4b6876d075"],
+
+Cell[BoxData[
+ FormBox["\<\"Connecting to external mac executable...\"\>", 
+  TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"9adf5fd4-9b30-4d8c-8ed8-efc9fbb39d47"],
+
+Cell[BoxData[
+ FormBox["\<\"Connection established.\"\>", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"5d557736-8f77-47cc-8799-0dfde94701ab"],
+
+Cell[BoxData[
+ FormBox["\<\"------------------------------------------------------------\"\>\
+", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"030d0260-46bd-4b86-bd5b-29ca2335b639"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"Package xAct`xTensor`  version \"\>", 
+    "\[InvisibleSpace]", "\<\"1.2.0\"\>", "\[InvisibleSpace]", "\<\", \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"{", 
+     RowBox[{"2021", ",", "10", ",", "17"}], "}"}]}],
+   SequenceForm[
+   "Package xAct`xTensor`  version ", "1.2.0", ", ", {2021, 10, 17}],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"cb609358-ba37-43d6-b956-2ff2ed06bfa6"],
+
+Cell[BoxData[
+ FormBox["\<\"CopyRight (C) 2002-2021, Jose M. Martin-Garcia, under the \
+General Public License.\"\>", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"f15b2072-045d-4ee3-88d2-592fca5334e6"],
+
+Cell[BoxData[
+ FormBox["\<\"------------------------------------------------------------\"\>\
+", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"973fa2aa-372b-41e2-be7c-694df53bda81"],
+
+Cell[BoxData[
+ FormBox["\<\"These packages come with ABSOLUTELY NO WARRANTY; for details \
+type Disclaimer[]. This is free software, and you are welcome to redistribute \
+it under certain conditions. See the General Public License for details.\"\>",
+   TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"9565ff05-7bf5-4bbe-9e46-185a537a2335"],
+
+Cell[BoxData[
+ FormBox["\<\"------------------------------------------------------------\"\>\
+", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"c90cea73-3576-4322-a647-13737800ab8b"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+This command specifies a manifold. I\[CloseCurlyQuote]ll call the manifold \
+M4, and specify it has 4 dimensions. The indices associated with this \
+manifold are a, b, c, etc.\
+\>", "Text",ExpressionUUID->"6a26fb97-79b8-4f02-83ef-9a3f9d5c781e"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DefManifold", "[", 
+  RowBox[{"M4", ",", "4", ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", ",", "g", ",", "h",
+      ",", "i", ",", "j", ",", "k", ",", "l"}], "}"}]}], "]"}]], "Input",
+ CellLabel->"In[2]:=",ExpressionUUID->"2d3facef-a6f1-43f8-bc3b-c7c3939226d9"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefManifold", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"manifold \"\>", "\[InvisibleSpace]", "M4", 
+    "\[InvisibleSpace]", "\<\". \"\>", "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefManifold, ": Defining ", 
+    "manifold ", $CellContext`M4, ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[2]:=",ExpressionUUID->"eb3a6a91-028a-4bba-9d5e-77b65d6014ae"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefVBundle", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"vbundle \"\>", "\[InvisibleSpace]", "TangentM4",
+     "\[InvisibleSpace]", "\<\". \"\>", "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefVBundle, ": Defining ", 
+    "vbundle ", $CellContext`TangentM4, ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[2]:=",ExpressionUUID->"3c87bb3e-99f2-41a6-98ab-1b845d27e1b4"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+This command defines a metric. The first argument is the metric signature. \
+The second argument is the name of the metric; note that it has to have two \
+indices. The fact that there are minus signs indicates that the indices are \
+lowered. CD is the name of the covariant derivative associated with the \
+metric. Finally, I want Mathematica to print \[OpenCurlyDoubleQuote]metric\
+\[CloseCurlyDoubleQuote] as \[OpenCurlyDoubleQuote]g\[CloseCurlyDoubleQuote]. \
+Note that Mathematica knows that this metric is associated with M4 because of \
+the indices that we use.\
+\>", "Text",ExpressionUUID->"25abbfbd-0d9f-4c76-a6f5-288a5c631344"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DefMetric", "[", 
+  RowBox[{
+   RowBox[{"-", "1"}], ",", 
+   RowBox[{"metric", "[", 
+    RowBox[{
+     RowBox[{"-", "a"}], ",", 
+     RowBox[{"-", "b"}]}], "]"}], ",", "CD", ",", 
+   RowBox[{"PrintAs", "->", "\"\<g\>\""}]}], "]"}]], "Input",
+ CellLabel->"In[3]:=",ExpressionUUID->"f66c6fce-7986-4bf5-b5ab-ee1e948d2fca"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"symmetric metric tensor \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"metric", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "symmetric metric tensor ", 
+    $CellContext`metric[-$CellContext`a, -$CellContext`b], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"3c6dc01d-2ee7-4707-b343-8717893d6c83"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"antisymmetric tensor \"\>", "\[InvisibleSpace]", 
+    RowBox[{"epsilonmetric", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}], ",", 
+      RowBox[{"-", "d"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "antisymmetric tensor ", 
+    $CellContext`epsilonmetric[-$CellContext`a, -$CellContext`b, \
+-$CellContext`c, -$CellContext`d], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"421bb71d-e803-4e34-9a07-c1d4d1ec8af7"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"tetrametric \"\>", "\[InvisibleSpace]", 
+    RowBox[{"Tetrametric", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}], ",", 
+      RowBox[{"-", "d"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm["** ", xAct`xTensor`DefTensor, ": Defining ", "tetrametric ", 
+    $CellContext`Tetrametric[-$CellContext`a, -$CellContext`b, \
+-$CellContext`c, -$CellContext`d], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"3eacaa99-dc4c-4e54-86d7-d73bc56180e8"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"tetrametric \"\>", "\[InvisibleSpace]", 
+    RowBox[{"Tetrametric\[Dagger]", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}], ",", 
+      RowBox[{"-", "d"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm["** ", xAct`xTensor`DefTensor, ": Defining ", "tetrametric ", 
+    $CellContext`Tetrametric\[Dagger][-$CellContext`a, -$CellContext`b, \
+-$CellContext`c, -$CellContext`d], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"c3c896f7-17fd-4198-aef3-9506a576eec4"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefCovD", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"covariant derivative \"\>", "\[InvisibleSpace]", 
+    RowBox[{"CD", "(", 
+     RowBox[{"-", "a"}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefCovD, ": Defining ", "covariant derivative ", 
+    $CellContext`CD[-$CellContext`a], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"1432eb35-68e9-45bb-87bf-b38e9176cee6"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"vanishing torsion tensor \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"TorsionCD", "(", 
+     RowBox[{"a", ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "vanishing torsion tensor ", 
+    $CellContext`TorsionCD[$CellContext`a, -$CellContext`b, -$CellContext`c], 
+    ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"5280553d-f20a-4779-8c1e-b07a604ee8ec"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"symmetric Christoffel tensor \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"ChristoffelCD", "(", 
+     RowBox[{"a", ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", 
+    "symmetric Christoffel tensor ", 
+    $CellContext`ChristoffelCD[$CellContext`a, -$CellContext`b, \
+-$CellContext`c], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"200c8f4c-a200-41d4-8ad4-23ac2942bc82"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"Riemann tensor \"\>", "\[InvisibleSpace]", 
+    RowBox[{"RiemannCD", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}], ",", 
+      RowBox[{"-", "d"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "Riemann tensor ", 
+    $CellContext`RiemannCD[-$CellContext`a, -$CellContext`b, -$CellContext`c, \
+-$CellContext`d], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"e527a41c-36fd-4db1-aeb1-81238cbfd661"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"symmetric Ricci tensor \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"RicciCD", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "symmetric Ricci tensor ", 
+    $CellContext`RicciCD[-$CellContext`a, -$CellContext`b], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"ea9fb568-d99d-4483-9e78-47de8ea38e47"],
+
+Cell[BoxData[
+ FormBox["\<\"** DefCovD:  Contractions of Riemann automatically replaced by \
+Ricci.\"\>", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"bc6f76da-4d55-4bb9-8ee6-a4afee587559"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"Ricci scalar \"\>", "\[InvisibleSpace]", 
+    RowBox[{"RicciScalarCD", "(", ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm["** ", xAct`xTensor`DefTensor, ": Defining ", "Ricci scalar ", 
+    $CellContext`RicciScalarCD[], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"2fa427e4-0eee-4f47-a138-f57cce1a468c"],
+
+Cell[BoxData[
+ FormBox["\<\"** DefCovD:  Contractions of Ricci automatically replaced by \
+RicciScalar.\"\>", TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"e98b2e92-e292-4961-b92b-b6fd4254dc04"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"symmetric Einstein tensor \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"EinsteinCD", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "symmetric Einstein tensor ", 
+    $CellContext`EinsteinCD[-$CellContext`a, -$CellContext`b], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"73bfdc78-1dd5-43d3-b8ce-563144bb074f"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"Weyl tensor \"\>", "\[InvisibleSpace]", 
+    RowBox[{"WeylCD", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}], ",", 
+      RowBox[{"-", "d"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm["** ", xAct`xTensor`DefTensor, ": Defining ", "Weyl tensor ", 
+    $CellContext`WeylCD[-$CellContext`a, -$CellContext`b, -$CellContext`c, \
+-$CellContext`d], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"6dcf2f17-9298-46a8-beac-2b5706a772ee"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"symmetric TFRicci tensor \"\>", 
+    "\[InvisibleSpace]", 
+    RowBox[{"TFRicciCD", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}]}], ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "symmetric TFRicci tensor ", 
+    $CellContext`TFRicciCD[-$CellContext`a, -$CellContext`b], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"1d517aa5-7524-47dd-9e6b-573626899b29"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"Kretschmann scalar \"\>", "\[InvisibleSpace]", 
+    RowBox[{"KretschmannCD", "(", ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "Kretschmann scalar ", 
+    $CellContext`KretschmannCD[], ". ", ""],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"3172894f-71ed-44ee-a1a4-30b2efccb959"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** DefCovD:  Computing RiemannToWeylRules for dim \"\>", 
+    "\[InvisibleSpace]", "4"}],
+   SequenceForm["** DefCovD:  Computing RiemannToWeylRules for dim ", 4],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"a4f7c319-dedc-4569-a92d-c794894c73fa"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** DefCovD:  Computing RicciToTFRicci for dim \"\>", 
+    "\[InvisibleSpace]", "4"}],
+   SequenceForm["** DefCovD:  Computing RicciToTFRicci for dim ", 4],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"5c540162-e1fc-4f71-9ee1-7e9514e20e7f"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** DefCovD:  Computing RicciToEinsteinRules for dim \"\>", 
+    "\[InvisibleSpace]", "4"}],
+   SequenceForm["** DefCovD:  Computing RicciToEinsteinRules for dim ", 4],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"e2659919-b176-427c-bd85-a9a9a45e408b"],
+
+Cell[BoxData[
+ FormBox[
+  InterpretationBox[
+   RowBox[{"\<\"** \"\>", "\[InvisibleSpace]", "DefTensor", 
+    "\[InvisibleSpace]", "\<\": Defining \"\>", 
+    "\[InvisibleSpace]", "\<\"weight +2 density \"\>", "\[InvisibleSpace]", 
+    RowBox[{"Detmetric", "(", ")"}], "\[InvisibleSpace]", "\<\". \"\>", 
+    "\[InvisibleSpace]", "\<\"Determinant.\"\>"}],
+   SequenceForm[
+   "** ", xAct`xTensor`DefTensor, ": Defining ", "weight +2 density ", 
+    $CellContext`Detmetric[], ". ", "Determinant."],
+   Editable->False], TraditionalForm]], "Print",
+ CellLabel->
+  "During evaluation of \
+In[3]:=",ExpressionUUID->"afe084cf-c163-4151-a926-ca79e7c05272"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+xTensor uses internal indices to manage things. This means that if I write \
+down something with contracted indices, it will look like the following:\
+\>", "Text",ExpressionUUID->"ac1660a8-d7d2-41d4-9c38-d5d804c99f5d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RicciScalarCD", "[", "]"}], "//", 
+  "RiemannToChristoffel"}]], "Input",
+ CellLabel->"In[4]:=",ExpressionUUID->"78b79359-c4b3-4cb1-9a83-1086eef44bc5"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{"Scalar", "(", 
+   RowBox[{
+    RowBox[{"metric", "(", 
+     RowBox[{"l$19162", ",", "l$19163"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", 
+       RowBox[{
+        RowBox[{"PD", "(", 
+         RowBox[{"-", "l$19162"}], ")"}], "\[InvisibleApplication]", 
+        RowBox[{"(", 
+         RowBox[{"ChristoffelCD", "(", 
+          RowBox[{"l$19165", ",", 
+           RowBox[{"-", "l$19165"}], ",", 
+           RowBox[{"-", "l$19163"}]}], ")"}], ")"}]}]}], "+", 
+      RowBox[{
+       RowBox[{"PD", "(", 
+        RowBox[{"-", "l$19165"}], ")"}], "\[InvisibleApplication]", 
+       RowBox[{"(", 
+        RowBox[{"ChristoffelCD", "(", 
+         RowBox[{"l$19165", ",", 
+          RowBox[{"-", "l$19162"}], ",", 
+          RowBox[{"-", "l$19163"}]}], ")"}], ")"}]}], "+", 
+      RowBox[{
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"l$19165", ",", 
+         RowBox[{"-", "l$19165"}], ",", 
+         RowBox[{"-", "l$19168"}]}], ")"}], " ", 
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"l$19168", ",", 
+         RowBox[{"-", "l$19162"}], ",", 
+         RowBox[{"-", "l$19163"}]}], ")"}]}], "-", 
+      RowBox[{
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"l$19165", ",", 
+         RowBox[{"-", "l$19162"}], ",", 
+         RowBox[{"-", "l$19168"}]}], ")"}], " ", 
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"l$19168", ",", 
+         RowBox[{"-", "l$19165"}], ",", 
+         RowBox[{"-", "l$19163"}]}], ")"}]}]}], ")"}]}], ")"}], 
+  TraditionalForm]], "Output",
+ CellLabel->"Out[4]=",ExpressionUUID->"43f74daf-30c8-432c-9180-d1b87d316974"]
+}, Open  ]],
+
+Cell["\<\
+We specify the Mathematica $Pre variable, which controls printing, should fix \
+these dollar indices appropriately.\
+\>", "Text",ExpressionUUID->"3541b591-fa10-4139-9b8f-ec15e0ae101b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"$Pre", "=", "ScreenDollarIndices"}], ";"}]], "Input",
+ CellLabel->"In[5]:=",ExpressionUUID->"ab01e117-2b3b-4b24-beab-dd1d0966b266"],
+
+Cell["Then, hey presto:", "Text",ExpressionUUID->"fb9632ea-9823-489a-990e-fbf00e6fdd70"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RicciScalarCD", "[", "]"}], "//", 
+  "RiemannToChristoffel"}]], "Input",
+ CellLabel->"In[6]:=",ExpressionUUID->"f11b3ff5-bfc1-4c22-8264-eb7662a20df8"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{"Scalar", "(", 
+   RowBox[{
+    RowBox[{"metric", "(", 
+     RowBox[{"a", ",", "b"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", 
+       RowBox[{
+        RowBox[{"PD", "(", 
+         RowBox[{"-", "a"}], ")"}], "\[InvisibleApplication]", 
+        RowBox[{"(", 
+         RowBox[{"ChristoffelCD", "(", 
+          RowBox[{"c", ",", 
+           RowBox[{"-", "c"}], ",", 
+           RowBox[{"-", "b"}]}], ")"}], ")"}]}]}], "+", 
+      RowBox[{
+       RowBox[{"PD", "(", 
+        RowBox[{"-", "c"}], ")"}], "\[InvisibleApplication]", 
+       RowBox[{"(", 
+        RowBox[{"ChristoffelCD", "(", 
+         RowBox[{"c", ",", 
+          RowBox[{"-", "a"}], ",", 
+          RowBox[{"-", "b"}]}], ")"}], ")"}]}], "+", 
+      RowBox[{
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"c", ",", 
+         RowBox[{"-", "c"}], ",", 
+         RowBox[{"-", "d"}]}], ")"}], " ", 
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"d", ",", 
+         RowBox[{"-", "a"}], ",", 
+         RowBox[{"-", "b"}]}], ")"}]}], "-", 
+      RowBox[{
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"c", ",", 
+         RowBox[{"-", "a"}], ",", 
+         RowBox[{"-", "d"}]}], ")"}], " ", 
+       RowBox[{"ChristoffelCD", "(", 
+        RowBox[{"d", ",", 
+         RowBox[{"-", "c"}], ",", 
+         RowBox[{"-", "b"}]}], ")"}]}]}], ")"}]}], ")"}], 
+  TraditionalForm]], "Output",
+ CellLabel->"Out[6]=",ExpressionUUID->"2c571322-e714-42c5-aadd-afadd40a6f2a"]
+}, Open  ]],
+
+Cell["Here is an expression that we are interested in:", "Text",ExpressionUUID->"680642d6-5ac3-41c6-b54a-56670902c7dc"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Hold", "[", 
+  RowBox[{
+   RowBox[{"RiemannCD", "[", 
+    RowBox[{
+     RowBox[{"-", "a"}], ",", 
+     RowBox[{"-", "b"}], ",", "c", ",", "d"}], "]"}], " ", 
+   RowBox[{"epsilonmetric", "[", 
+    RowBox[{
+     RowBox[{"-", "i"}], ",", 
+     RowBox[{"-", "c"}], ",", 
+     RowBox[{"-", "d"}], ",", 
+     RowBox[{"-", "e"}]}], "]"}], " ", 
+   RowBox[{"epsilonmetric", "[", 
+    RowBox[{"i", ",", "f", ",", "g", ",", "h"}], "]"}]}], "]"}]], "Input",
+ CellLabel->"In[7]:=",ExpressionUUID->"af188203-a856-4a17-bc9b-c79a86cf7e5b"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{"Hold", "[", 
+   RowBox[{
+    RowBox[{"RiemannCD", "(", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}], ",", "c", ",", "d"}], ")"}], " ", 
+    RowBox[{"epsilonmetric", "(", 
+     RowBox[{
+      RowBox[{"-", "i"}], ",", 
+      RowBox[{"-", "c"}], ",", 
+      RowBox[{"-", "d"}], ",", 
+      RowBox[{"-", "e"}]}], ")"}], " ", 
+    RowBox[{"epsilonmetric", "(", 
+     RowBox[{"i", ",", "f", ",", "g", ",", "h"}], ")"}]}], "]"}], 
+  TraditionalForm]], "Output",
+ CellLabel->"Out[7]=",ExpressionUUID->"400d5826-5627-4f3d-87e8-131eb61e582f"]
+}, Open  ]],
+
+Cell["\<\
+Note that if I release it, xTensor converts the epsilon products into \
+Kronecker deltas as follows.\
+\>", "Text",ExpressionUUID->"95e0fabf-2222-4b9b-84c0-878ccc84f626"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Release", "[", "%", "]"}]], "Input",
+ CellLabel->"In[8]:=",ExpressionUUID->"2d8ff8a4-8657-4cd2-a536-d2e4f3842948"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"RiemannCD", "(", 
+    RowBox[{
+     RowBox[{"-", "a"}], ",", 
+     RowBox[{"-", "b"}], ",", "c", ",", "d"}], ")"}], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "c"}], ",", "h"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "d"}], ",", "g"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "e"}], ",", "f"}], ")"}]}], "-", 
+     RowBox[{
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "c"}], ",", "g"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "d"}], ",", "h"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "e"}], ",", "f"}], ")"}]}], "-", 
+     RowBox[{
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "c"}], ",", "h"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "d"}], ",", "f"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "e"}], ",", "g"}], ")"}]}], "+", 
+     RowBox[{
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "c"}], ",", "f"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "d"}], ",", "h"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "e"}], ",", "g"}], ")"}]}], "+", 
+     RowBox[{
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "c"}], ",", "g"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "d"}], ",", "f"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "e"}], ",", "h"}], ")"}]}], "-", 
+     RowBox[{
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "c"}], ",", "f"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "d"}], ",", "g"}], ")"}], " ", 
+      RowBox[{"delta", "(", 
+       RowBox[{
+        RowBox[{"-", "e"}], ",", "h"}], ")"}]}]}], ")"}]}], 
+  TraditionalForm]], "Output",
+ CellLabel->"Out[8]=",ExpressionUUID->"5444c606-9bc8-4fec-8ff6-14c184249aa0"]
+}, Open  ]],
+
+Cell["\<\
+The reason I\[CloseCurlyQuote]ve held it is that I want to antisymmetrize it, \
+as follows. Note that we are antisymmetrizing over 5 indices in four \
+dimensions: this thing is automatically zero.\
+\>", "Text",ExpressionUUID->"cd889e75-1e1b-4ecf-bb89-1bebf520643c"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Antisymmetrize", "[", 
+   RowBox[{"%%", ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}], ",", 
+      RowBox[{"-", "d"}], ",", 
+      RowBox[{"-", "e"}]}], "}"}]}], "]"}], "//", "Release"}]], "Input",
+ CellLabel->"In[9]:=",ExpressionUUID->"43759e10-8508-4b87-8d20-309b46615a1d"],
+
+Cell[BoxData[
+ FormBox[
+  TemplateBox[<|"shortenedBoxes" -> TagBox[
+      RowBox[{
+        FractionBox["1", "120"], " ", 
+        RowBox[{"(", 
+          RowBox[{
+            RowBox[{
+              RowBox[{"(", 
+                RowBox[{
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "b"}], ",", "h"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "e"}], ",", "f"}], ")"}]}], "-", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "b"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "h"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "e"}], ",", "f"}], ")"}]}], "-", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "b"}], ",", "h"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "e"}], ",", "g"}], ")"}]}], "+", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "b"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "h"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "e"}], ",", "g"}], ")"}]}], "+", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "b"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "e"}], ",", "h"}], ")"}]}], "-", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "b"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "e"}], ",", "h"}], ")"}]}]}], ")"}], " ", 
+              RowBox[{"metric", "(", 
+                RowBox[{"c", ",", "l10"}], ")"}], " ", 
+              RowBox[{"RicciCD", "(", 
+                RowBox[{
+                  RowBox[{"-", "a"}], ",", 
+                  RowBox[{"-", "l10"}]}], ")"}]}], "+", 
+            TemplateBox[{"127"}, "OutputSizeLimit`Skeleton"], "+", 
+            RowBox[{"3", " ", 
+              RowBox[{"(", 
+                RowBox[{
+                  RowBox[{
+                    RowBox[{"-", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "a"}], ",", "h"}], ")"}]}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "d"}], ",", "f"}], ")"}]}], "+", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "a"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "h"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "d"}], ",", "f"}], ")"}]}], "+", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "a"}], ",", "h"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "d"}], ",", "g"}], ")"}]}], "-", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "a"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "h"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "d"}], ",", "g"}], ")"}]}], "-", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "a"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "d"}], ",", "h"}], ")"}]}], "+", 
+                  RowBox[{
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "a"}], ",", "f"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "c"}], ",", "g"}], ")"}], " ", 
+                    RowBox[{"delta", "(", 
+                    RowBox[{
+                    RowBox[{"-", "d"}], ",", "h"}], ")"}]}]}], ")"}], " ", 
+              RowBox[{"RiemannCD", "(", 
+                RowBox[{
+                  RowBox[{"-", "e"}], ",", 
+                  RowBox[{"-", "b"}], ",", "c", ",", "d"}], ")"}]}]}], 
+          ")"}]}], Short[#, 8]& ], "line" -> 9, "sessionID" -> 
+    32568102285160666275, "byteCount" -> 273472, "size" -> 8, "stored" -> 
+    False, "expr" -> Missing["NotStored"], "wrap" -> OutputSizeLimit`Defer, 
+    "version" -> 1|>,
+   "OutputSizeLimitTemplate"], TraditionalForm]], "Output",
+ CellLabel->"Out[9]=",ExpressionUUID->"1e4cd6ef-cee2-487a-b513-18a568acf511"]
+}, Open  ]],
+
+Cell["\<\
+Ok, that\[CloseCurlyQuote]s a little big. Let\[CloseCurlyQuote]s simplify by \
+letting xTensor contract metrics where they appear.\
+\>", "Text",ExpressionUUID->"146f0ef0-c360-479b-b024-8ccde34d9299"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"result", "=", 
+  RowBox[{"%", "//", "ContractMetric"}]}]], "Input",
+ CellLabel->"In[10]:=",ExpressionUUID->"a26ffa03-fb1b-4718-96a2-88b3db03de82"],
+
+Cell[BoxData[
+ FormBox[
+  TemplateBox[<|"shortenedBoxes" -> TagBox[
+      RowBox[{
+        RowBox[{
+          RowBox[{"-", 
+            FractionBox["1", "5"]}], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "b"}], ",", "h"}], ")"}], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", "g"}], ")"}], " ", 
+          RowBox[{"RicciCD", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "f"}], ")"}]}], "+", 
+        RowBox[{
+          FractionBox["1", "5"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "b"}], ",", "g"}], ")"}], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", "h"}], ")"}], " ", 
+          RowBox[{"RicciCD", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "f"}], ")"}]}], "+", 
+        RowBox[{
+          FractionBox["1", "5"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "b"}], ",", "h"}], ")"}], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", "f"}], ")"}], " ", 
+          RowBox[{"RicciCD", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "g"}], ")"}]}], "-", 
+        RowBox[{
+          FractionBox["1", "5"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "b"}], ",", "f"}], ")"}], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", "h"}], ")"}], " ", 
+          RowBox[{"RicciCD", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "g"}], ")"}]}], "-", 
+        RowBox[{
+          FractionBox["1", "5"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "b"}], ",", "g"}], ")"}], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", "f"}], ")"}], " ", 
+          RowBox[{"RicciCD", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "h"}], ")"}]}], "+", 
+        RowBox[{
+          FractionBox["1", "5"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "b"}], ",", "f"}], ")"}], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", "g"}], ")"}], " ", 
+          RowBox[{"RicciCD", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "h"}], ")"}]}], "+", 
+        TemplateBox[{"71"}, "OutputSizeLimit`Skeleton"], "+", 
+        RowBox[{
+          FractionBox["1", "20"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "b"}], ",", "f"}], ")"}], " ", 
+          RowBox[{"RiemannCD", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", 
+              RowBox[{"-", "a"}], ",", "h", ",", "g"}], ")"}]}], "+", 
+        RowBox[{
+          FractionBox["1", "20"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "h"}], ")"}], " ", 
+          RowBox[{"RiemannCD", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", 
+              RowBox[{"-", "b"}], ",", "f", ",", "g"}], ")"}]}], "-", 
+        RowBox[{
+          FractionBox["1", "20"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "g"}], ")"}], " ", 
+          RowBox[{"RiemannCD", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", 
+              RowBox[{"-", "b"}], ",", "f", ",", "h"}], ")"}]}], "-", 
+        RowBox[{
+          FractionBox["1", "20"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "h"}], ")"}], " ", 
+          RowBox[{"RiemannCD", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", 
+              RowBox[{"-", "b"}], ",", "g", ",", "f"}], ")"}]}], "+", 
+        RowBox[{
+          FractionBox["1", "20"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "f"}], ")"}], " ", 
+          RowBox[{"RiemannCD", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", 
+              RowBox[{"-", "b"}], ",", "g", ",", "h"}], ")"}]}], "+", 
+        RowBox[{
+          FractionBox["1", "20"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "g"}], ")"}], " ", 
+          RowBox[{"RiemannCD", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", 
+              RowBox[{"-", "b"}], ",", "h", ",", "f"}], ")"}]}], "-", 
+        RowBox[{
+          FractionBox["1", "20"], " ", 
+          RowBox[{"delta", "(", 
+            RowBox[{
+              RowBox[{"-", "a"}], ",", "f"}], ")"}], " ", 
+          RowBox[{"RiemannCD", "(", 
+            RowBox[{
+              RowBox[{"-", "e"}], ",", 
+              RowBox[{"-", "b"}], ",", "h", ",", "g"}], ")"}]}]}], 
+      Short[#, 8]& ], "line" -> 10, "sessionID" -> 32568102285160666275, 
+    "byteCount" -> 29824, "size" -> 8, "stored" -> False, "expr" -> 
+    Missing["NotStored"], "wrap" -> OutputSizeLimit`Defer, "version" -> 1|>,
+   "OutputSizeLimitTemplate"], TraditionalForm]], "Output",
+ CellLabel->"Out[10]=",ExpressionUUID->"bfb99f9e-3074-4294-b1f4-8f9d59dfda81"]
+}, Open  ]],
+
+Cell["\<\
+That\[CloseCurlyQuote]s still pretty big. But note that we have some \
+degeneracies here. These degeneracies look like the following:\
+\>", "Text",ExpressionUUID->"5f883b03-ce5f-49fa-a8c1-c8ac58b0f4c9"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RiemannCD", "[", 
+   RowBox[{
+    RowBox[{"-", "a"}], ",", 
+    RowBox[{"-", "b"}], ",", "c", ",", "d"}], "]"}], "+", 
+  RowBox[{"RiemannCD", "[", 
+   RowBox[{
+    RowBox[{"-", "b"}], ",", 
+    RowBox[{"-", "a"}], ",", "d", ",", "c"}], "]"}]}]], "Input",
+ CellLabel->"In[11]:=",ExpressionUUID->"4b9ed95a-ead3-4417-b229-21b52e01857f"],
+
+Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{"RiemannCD", "(", 
+    RowBox[{
+     RowBox[{"-", "a"}], ",", 
+     RowBox[{"-", "b"}], ",", "c", ",", "d"}], ")"}], "+", 
+   RowBox[{"RiemannCD", "(", 
+    RowBox[{
+     RowBox[{"-", "b"}], ",", 
+     RowBox[{"-", "a"}], ",", "d", ",", "c"}], ")"}]}], 
+  TraditionalForm]], "Output",
+ CellLabel->"Out[11]=",ExpressionUUID->"04eb1b5c-fd65-44ea-8afd-ee7ee3c46224"]
+}, Open  ]],
+
+Cell["\<\
+Note that RiemannCD is the Riemann tensor from the metric with covariant \
+derivative CD. We can ask xTensor to canonicalize this expression, by using \
+whatever symmetries are available to it to simplify things. The command to do \
+this is ToCanonical, and is easily the most complicated command in xTensor, \
+under the hood. Thankfully, it\[CloseCurlyQuote]s also a really easy command \
+to use. It will fix the above as\
+\>", "Text",ExpressionUUID->"935e4164-35dc-41d1-83f4-3cf3fba4db81"],
+
+Cell[BoxData[
+ RowBox[{"%", "//", "ToCanonical"}]], "Input",ExpressionUUID->"0a5ac9d9-6c4a-481f-a2b3-aec9db4749f6"],
+
+Cell["\<\
+Because of the funny internal storage of indices, it will also fix \
+expressions like the following:\
+\>", "Text",ExpressionUUID->"27da5afd-97ed-46d9-86e0-6b24b245e34f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"CD", "[", 
+    RowBox[{"-", "a"}], "]"}], "[", 
+   RowBox[{
+    RowBox[{"CD", "[", "a", "]"}], "[", 
+    RowBox[{"RicciScalarCD", "[", "]"}], "]"}], "]"}], "+", 
+  RowBox[{
+   RowBox[{"CD", "[", 
+    RowBox[{"-", "b"}], "]"}], "@", 
+   RowBox[{
+    RowBox[{"CD", "[", "b", "]"}], "@", 
+    RowBox[{"RicciScalarCD", "[", "]"}]}]}]}], "\[IndentingNewLine]", 
+ RowBox[{"%", "//", "ToCanonical"}]}], "Input",ExpressionUUID->"20837e30-321e-\
+4e45-a845-225ea66f9859"],
+
+Cell["\<\
+Note that this demonstrates two ways to write covariant derivatives. The @ \
+command is a Mathematica shorthand (see howto/UseShorthandNotations in the \
+help).
+
+Let\[CloseCurlyQuote]s go back and canonicalize our expression. Remember that \
+this is exactly zero in four dimensions.\
+\>", "Text",ExpressionUUID->"0208c20a-4a57-4641-8511-f5c7b5f68206"],
+
+Cell[BoxData[
+ RowBox[{"result", "//", "ToCanonical"}]], "Input",ExpressionUUID->"60ed5383-554f-469e-a8c9-7337c1344b38"],
+
+Cell["\<\
+Now I\[CloseCurlyQuote]m going to multiply this by some stuff, and do a \
+little bit of cleaning up.\
+\>", "Text",ExpressionUUID->"6e24ef50-cd45-49e3-b00d-c8657bb7d68a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"5", " ", "/", "2"}], 
+      RowBox[{"metric", "[", 
+       RowBox[{
+        RowBox[{"-", "h"}], ",", 
+        RowBox[{"-", "l"}]}], "]"}], " ", 
+      RowBox[{"RiemannCD", "[", 
+       RowBox[{
+        RowBox[{"-", "f"}], ",", 
+        RowBox[{"-", "g"}], ",", "e", ",", "a"}], "]"}], " ", "%"}], "//", 
+     "Expand"}], "//", "ContractMetric"}], "//", "ToCanonical"}], "//", 
+  "Simplify"}]], "Input",ExpressionUUID->"1fc6d8f2-bc0c-4a6e-8c54-\
+f299defb8a6c"],
+
+Cell["\<\
+I\[CloseCurlyQuote]d like to write this in a bit nicer notation by collecting \
+all the metric components together.\
+\>", "Text",ExpressionUUID->"47abe83f-0294-4748-9fe4-35c0fdd54940"],
+
+Cell[BoxData[
+ RowBox[{"IndexCollect", "[", 
+  RowBox[{
+   RowBox[{"Expand", "@", "%"}], ",", 
+   RowBox[{"metric", "[", 
+    RowBox[{
+     RowBox[{"-", "b"}], ",", 
+     RowBox[{"-", "l"}]}], "]"}]}], "]"}]], "Input",ExpressionUUID->"c21a4286-\
+c010-420e-9804-474820cb2344"],
+
+Cell["\<\
+This is the Lovelock tensor. What we\[CloseCurlyQuote]ve just done is the \
+simplest way to show that it\[CloseCurlyQuote]s zero in four dimensions. This \
+is also the expression that we get if we vary an action containing the \
+Gauss-Bonnet term. Actually seeing that it\[CloseCurlyQuote]s zero from that \
+perspective is really quite difficult, however. Regardless, all of these \
+manipulations took mere seconds. Doing this expansion by hand takes a decent \
+amount of time.
+
+Because all of the manipulations done here are essentially manipulating \
+integers and nothing else, all of these results are incredible reliable, so \
+long as you don\[CloseCurlyQuote]t make a mistake in the process of typing it \
+in!\
+\>", "Text",ExpressionUUID->"399e464b-9484-497d-81a3-395aaf40675a"],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "result", "]"}]], "Input",ExpressionUUID->"0b750aae-73e5-4704-98df-c671622f8161"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Part 2. Perturbation Theory", "Section",ExpressionUUID->"2dd6c864-f34f-43de-8596-1f3c731b94a5"],
+
+Cell["\<\
+Here we need to install a subpackage of xTensor, called xPert.\
+\>", "Text",ExpressionUUID->"f0e75755-36ef-4c60-acdb-561562dfb016"],
+
+Cell[BoxData[
+ RowBox[{"<<", "xAct`xPert`"}]], "Input",ExpressionUUID->"d8887650-b94f-451f-8cf3-7551aecf412e"],
+
+Cell["\<\
+This little bit of code just colours in perturbative indices, making things a \
+little more readable.\
+\>", "Text",ExpressionUUID->"4e15fd88-23cc-4a58-8073-716b57dd3433"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Unprotect", "[", "IndexForm", "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"IndexForm", "[", 
+    RowBox[{"LI", "[", "x_", "]"}], "]"}], ":=", 
+   RowBox[{"ColorString", "[", 
+    RowBox[{
+     RowBox[{"ToString", "[", "x", "]"}], ",", 
+     RowBox[{"RGBColor", "[", 
+      RowBox[{"0", ",", "0", ",", "1"}], "]"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"Protect", "[", "IndexForm", "]"}], ";"}]}], "Input",ExpressionUUID->\
+"158aa8d3-d7bd-42dd-8edd-1f0dd2c4d86b"],
+
+Cell["\<\
+We need to define a metric perturbation. We\[CloseCurlyQuote]ll call it \
+\[OpenCurlyDoubleQuote]metpert\[CloseCurlyDoubleQuote], and have it display \
+as \[OpenCurlyDoubleQuote]h\[CloseCurlyDoubleQuote]. \[Epsilon] will be our \
+expansion parameter.\
+\>", "Text",ExpressionUUID->"5b2c9ba0-744f-4ad7-aab0-d8d77b687910"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"DefMetricPerturbation", "[", 
+   RowBox[{"metric", ",", "metpert", ",", "\[Epsilon]"}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"PrintAs", "[", "metpert", "]"}], "^=", "\"\<h\>\""}], 
+  ";"}]}], "Input",ExpressionUUID->"b6c39f14-1ab5-4880-ae89-c09593f15347"],
+
+Cell["To write perturbed quantities, we\[CloseCurlyQuote]ll do the \
+following.", "Text",ExpressionUUID->"6aa68c1d-0d8f-4fb6-b7e4-2ff5c5f596ce"],
+
+Cell[BoxData[
+ RowBox[{"metpert", "[", 
+  RowBox[{
+   RowBox[{"LI", "[", "2", "]"}], ",", 
+   RowBox[{"-", "a"}], ",", 
+   RowBox[{"-", "b"}]}], "]"}]], "Input",ExpressionUUID->"76221f5e-83bc-4dd4-\
+b15b-de5a97f94743"],
+
+Cell["\<\
+This would be a second order perturbation. 
+
+We need to know three commands. Firstly, we want to be able to perturb stuff.\
+\>", "Text",ExpressionUUID->"0765d033-a80d-4fc3-b5b8-fb9150465b2a"],
+
+Cell[BoxData[{
+ RowBox[{"Perturbation", "[", 
+  RowBox[{
+   RowBox[{"metric", "[", 
+    RowBox[{
+     RowBox[{"-", "a"}], ",", 
+     RowBox[{"-", "b"}]}], "]"}], ",", "1"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Perturbation", "[", 
+  RowBox[{
+   RowBox[{"metric", "[", 
+    RowBox[{"a", ",", "b"}], "]"}], ",", "3"}], "]"}]}], "Input",ExpressionUUI\
+D->"4552c170-3e6a-4c3d-b0ee-da4ef5a2bef9"],
+
+Cell["\<\
+What\[CloseCurlyQuote]s this triangle thing? It\[CloseCurlyQuote]s saying \
+that it doesn\[CloseCurlyQuote]t know how to perturb the inverse metric \
+natively. The triangle is just a wrapper noting that it needs special \
+attention. To give it that special attention, we use the ExpandPerturbation \
+command.\
+\>", "Text",ExpressionUUID->"e70ffcd9-9728-42a4-877b-be44ecd0b362"],
+
+Cell[BoxData[
+ RowBox[{"ExpandPerturbation", "@", "%"}]], "Input",ExpressionUUID->"3f64adbb-b1dd-40c1-bf1b-72145ce5d492"],
+
+Cell["\<\
+Ever tried doing that by hand?
+
+If we want to write everything out to an appropriate order, we can use the \
+Perturbed command.\
+\>", "Text",ExpressionUUID->"66061633-0a57-4aa9-804e-f92c3d8b0e72"],
+
+Cell[BoxData[{
+ RowBox[{"Perturbed", "[", 
+  RowBox[{
+   RowBox[{"metric", "[", 
+    RowBox[{"a", ",", "b"}], "]"}], ",", "3"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"ExpandPerturbation", "@", "%"}]}], "Input",ExpressionUUID->\
+"b1ddd30b-9a11-4156-8cbf-fdd7561cd4be"],
+
+Cell["\<\
+Neat, huh? Note that perturbations are written out order by order in an \
+expansion parameter.\
+\>", "Text",ExpressionUUID->"57886578-20d0-4d82-89d4-d5bed68a2777"],
+
+Cell[BoxData[
+ RowBox[{"Perturbed", "[", 
+  RowBox[{
+   RowBox[{"metric", "[", 
+    RowBox[{
+     RowBox[{"-", "a"}], ",", 
+     RowBox[{"-", "b"}]}], "]"}], ",", "3"}], "]"}]], "Input",ExpressionUUID->\
+"f44a05b7-c9f0-44e1-9f76-e067ae73ea68"],
+
+Cell[TextData[{
+ "If we only want to write ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubscriptBox["g", "ab"], "=", 
+    RowBox[{
+     SubscriptBox[
+      SuperscriptBox["g", "0"], "ab"], "+", 
+     SubscriptBox["h", "ab"]}]}], TraditionalForm]],ExpressionUUID->
+  "89952d54-f75c-4340-a25e-db3004782d07"],
+ ", we need to kill the higher order perturbations, which we can do by using \
+a Mathematica rule (that we have to write)."
+}], "Text",ExpressionUUID->"896d74d4-15e1-485e-960a-74e83ed45230"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"firstorderonly", "=", 
+   RowBox[{
+    RowBox[{"metpert", "[", 
+     RowBox[{
+      RowBox[{"LI", "[", "n_", "]"}], ",", "__"}], "]"}], "\[RuleDelayed]", 
+    RowBox[{"0", "/;", 
+     RowBox[{"n", ">", "1"}]}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Perturbed", "[", 
+   RowBox[{
+    RowBox[{"metric", "[", 
+     RowBox[{
+      RowBox[{"-", "a"}], ",", 
+      RowBox[{"-", "b"}]}], "]"}], ",", "3"}], "]"}], "/.", 
+  "firstorderonly"}]}], "Input",ExpressionUUID->"932d2cd2-145a-411d-a8d7-\
+01f70c4dc576"],
+
+Cell["Ok, that\[CloseCurlyQuote]s the introduction. Let\[CloseCurlyQuote]s do \
+some amazing stuff.", "Text",ExpressionUUID->"9e16017c-2cdb-4749-8171-\
+83493fbc5f67"],
+
+Cell[BoxData[
+ RowBox[{"ExpandPerturbation", "@", 
+  RowBox[{"Perturbed", "[", 
+   RowBox[{
+    RowBox[{"ChristoffelCD", "[", 
+     RowBox[{"a", ",", 
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}]}], "]"}], ",", "1"}], "]"}]}]], "Input",ExpressionUUI\
+D->"7c21e5c1-ebd7-4786-bf9b-2de8c595334b"],
+
+Cell["\<\
+Let\[CloseCurlyQuote]s write this in terms of partial derivatives. First, we \
+separate out the metric appropriately, then we change to partial derivatives. \
+Next, we canonicalize. Canonicalization complains about partial derivatives \
+that don\[CloseCurlyQuote]t commute, so we tell it not to even try.\
+\>", "Text",ExpressionUUID->"9c3d125c-713c-49fa-b8b5-3f5645fac37c"],
+
+Cell[BoxData[{
+ RowBox[{"%", "//", 
+  RowBox[{"SeparateMetric", "[", "metric", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"ChangeCovD", "[", 
+  RowBox[{"%", ",", "CD", ",", "PD"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"ToCanonical", "[", 
+  RowBox[{"%", ",", 
+   RowBox[{"UseMetricOnVBundle", "\[Rule]", "None"}]}], "]"}]}], "Input",Expre\
+ssionUUID->"92099892-00f0-401c-a4c1-1974284cd293"],
+
+Cell["\<\
+This is the expression you\[CloseCurlyQuote]re probably more familiar with.
+
+Ok, let\[CloseCurlyQuote]s do some real magic now.\
+\>", "Text",ExpressionUUID->"b7935b4e-f80d-42d3-8adb-89327771380b"],
+
+Cell[BoxData[
+ RowBox[{"Collect", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"ExpandPerturbation", "@", 
+      RowBox[{"Perturbed", "[", 
+       RowBox[{
+        RowBox[{"RiemannCD", "[", 
+         RowBox[{
+          RowBox[{"-", "a"}], ",", 
+          RowBox[{"-", "b"}], ",", 
+          RowBox[{"-", "c"}], ",", "d"}], "]"}], ",", "2"}], "]"}]}], "/.", 
+     "firstorderonly"}], "//", "ToCanonical"}], ",", "\[Epsilon]"}], 
+  "]"}]], "Input",ExpressionUUID->"bf69887f-f93c-4eb0-86aa-e858930cb583"],
+
+Cell["Would you like to do that by hand?", "Text",ExpressionUUID->"02231003-37f9-44a8-8885-b18cbb907885"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Part 3. Equations of Motion", "Section",ExpressionUUID->"c0916175-5e7a-4bd1-860b-8199c66eb729"],
+
+Cell["\<\
+We can use perturbations to obtain equations of motion for an action. To \
+obtain an equation of motion (by hand), we\[CloseCurlyQuote]d vary the fields \
+and expand to first order, then integrate by parts appropriately, and set the \
+variation to zero. Here, we\[CloseCurlyQuote]re going to do exactly the same \
+thing: xTensor has a built-in variational derivative.\
+\>", "Text",ExpressionUUID->"ead7f809-7e57-4930-992e-4cbe6ca82727"],
+
+Cell["\<\
+Let me start by defining a scalar field, and perturbations to the scalar \
+field.\
+\>", "Text",ExpressionUUID->"361b8039-f9aa-470e-ad5e-704ce019d518"],
+
+Cell[BoxData[{
+ RowBox[{"DefTensor", "[", 
+  RowBox[{
+   RowBox[{"Phi", "[", "]"}], ",", "M4", ",", 
+   RowBox[{"PrintAs", "\[Rule]", "\"\<\[CurlyPhi]\>\""}]}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefTensorPerturbation", "[", 
+  RowBox[{
+   RowBox[{"PertPhi", "[", 
+    RowBox[{"LI", "[", "order", "]"}], "]"}], ",", 
+   RowBox[{"Phi", "[", "]"}], ",", "M4", ",", 
+   RowBox[{"PrintAs", "\[Rule]", "\"\<\[Delta]\[CurlyPhi]\>\""}]}], 
+  "]"}]}], "Input",ExpressionUUID->"74e2b4e3-102c-4b41-a144-b8198ab91c97"],
+
+Cell["\<\
+Let\[CloseCurlyQuote]s define some scalar functions, and a constant symbol, \
+as follows.\
+\>", "Text",ExpressionUUID->"074c3fd7-53e9-495e-aa8b-94dfd30c08cd"],
+
+Cell[BoxData[{
+ RowBox[{"DefScalarFunction", "[", "V", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefScalarFunction", "[", "F", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefScalarFunction", "[", "G", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefConstantSymbol", "[", 
+  RowBox[{"MPlanck", ",", " ", 
+   RowBox[{
+   "PrintAs", " ", "\[Rule]", 
+    "\"\<\!\(\*SubscriptBox[\(m\), \(p\)]\)\>\""}]}], "]"}]}], "Input",Express\
+ionUUID->"1d56a8e5-671a-439c-bea3-3d043f2e399a"],
+
+Cell["Now, let\[CloseCurlyQuote]s construct our action.", "Text",ExpressionUUID->"d52a901c-7da6-4e48-b980-3319028f9353"],
+
+Cell[BoxData[
+ RowBox[{"L", "=", 
+  RowBox[{
+   RowBox[{"Sqrt", "[", 
+    RowBox[{"-", 
+     RowBox[{"Detmetric", "[", "]"}]}], "\[InvisibleSpace]", "]"}], 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"MPlanck", "^", "2"}], "/", "2"}], 
+      RowBox[{"RicciScalarCD", "[", "]"}]}], "-", 
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "*", 
+      RowBox[{
+       RowBox[{"CD", "[", 
+        RowBox[{"-", "b"}], "]"}], "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}], "*", 
+      RowBox[{
+       RowBox[{"CD", "[", "b", "]"}], "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}]}], "-", 
+     RowBox[{"V", "[", 
+      RowBox[{"Phi", "[", "]"}], "]"}]}], ")"}]}]}]], "Input",ExpressionUUID->\
+"bff0c0a7-2f16-4c1d-af26-c5da2635ac60"],
+
+Cell["\<\
+We\[CloseCurlyQuote]ll just keep it simple to begin with. Next, we do the \
+variation:\
+\>", "Text",ExpressionUUID->"d32e6644-67d4-4d0b-a265-46b72992e43d"],
+
+Cell[BoxData[
+ RowBox[{"Lpert", "=", 
+  RowBox[{"ToCanonical", "@", 
+   RowBox[{"ContractMetric", "@", 
+    RowBox[{"ExpandPerturbation", "@", 
+     RowBox[{"Perturbation", "@", "L"}]}]}]}]}]], "Input",ExpressionUUID->\
+"c0a6fc4e-48d9-49a1-9e56-f5c7c307520a"],
+
+Cell["\<\
+To get the equations of motion, we now do variational derivatives with \
+respect to our fields. Here is the scalar equation of motion.\
+\>", "Text",ExpressionUUID->"43260ed3-1bb9-4ba7-bab6-99edca7a5139"],
+
+Cell[BoxData[
+ RowBox[{"0", "==", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"VarD", "[", 
+         RowBox[{
+          RowBox[{"PertPhi", "[", 
+           RowBox[{"LI", "[", "1", "]"}], "]"}], ",", "CD"}], "]"}], "[", 
+        "Lpert", "]"}], "/", 
+       RowBox[{"Sqrt", "[", 
+        RowBox[{"-", 
+         RowBox[{"Detmetric", "[", "]"}]}], "]"}]}], "/.", 
+      RowBox[{
+       RowBox[{"delta", "[", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"LI", "[", "1", "]"}]}], ",", 
+         RowBox[{"LI", "[", "1", "]"}]}], "]"}], "\[Rule]", "1"}]}], "//", 
+     "ToCanonical"}], "//", "Simplify"}], ")"}]}]], "Input",ExpressionUUID->\
+"ab323510-0832-47c7-a738-fb2231512e77"],
+
+Cell[TextData[{
+ "And here is the tensor equation of motion. We vary with respect to ",
+ Cell[BoxData[
+  FormBox[
+   SuperscriptBox["g", "ab"], TraditionalForm]],ExpressionUUID->
+  "a347d249-80c2-494c-a4e7-17c6d67e6c79"],
+ "."
+}], "Text",ExpressionUUID->"4da29005-1df7-4d05-8758-b964de38fb4f"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"RHS", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"2", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"-", 
+             RowBox[{
+              RowBox[{"VarD", "[", 
+               RowBox[{
+                RowBox[{"metpert", "[", 
+                 RowBox[{
+                  RowBox[{"LI", "[", "1", "]"}], ",", "a", ",", "b"}], "]"}], 
+                ",", "CD"}], "]"}], "[", "Lpert", "]"}]}], "/", 
+            RowBox[{"Sqrt", "[", 
+             RowBox[{"-", 
+              RowBox[{"Detmetric", "[", "]"}]}], "]"}]}], "/.", 
+           RowBox[{
+            RowBox[{"delta", "[", 
+             RowBox[{
+              RowBox[{"-", 
+               RowBox[{"LI", "[", "1", "]"}]}], ",", 
+              RowBox[{"LI", "[", "1", "]"}]}], "]"}], "\[Rule]", "1"}]}], "//", 
+          RowBox[{"SeparateMetric", "[", "metric", "]"}]}], "//", 
+         "RicciToEinstein"}], ")"}]}], "//", "Expand"}], "//", 
+     "ContractMetric"}], "//", "ToCanonical"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"0", "\[Equal]", "RHS"}]}], "Input",ExpressionUUID->"48d408ea-c0f6-\
+43c5-b218-987ec5c69051"],
+
+Cell["\<\
+Neat, huh? The command RicciToEinstein just changes the Ricci tensor to the \
+Einstein tensor.\
+\>", "Text",ExpressionUUID->"01dc1083-9e37-4840-af65-502bc09e9dcc"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"RicciCD", "[", 
+   RowBox[{
+    RowBox[{"-", "a"}], ",", 
+    RowBox[{"-", "b"}]}], "]"}], "//", "RicciToEinstein"}]], "Input",Expressio\
+nUUID->"4dcd7410-3cc0-432f-91cf-0c2d839a17e4"],
+
+Cell["Note that the Bianchi identity is automatic:", "Text",ExpressionUUID->"9c8afadb-b1e0-4aa5-803e-43da6ec080f1"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"CD", "[", "a", "]"}], "@", 
+  RowBox[{"EinsteinCD", "[", 
+   RowBox[{
+    RowBox[{"-", "a"}], ",", 
+    RowBox[{"-", "b"}]}], "]"}]}]], "Input",ExpressionUUID->"9f4a6903-6cf9-\
+4f0f-b3be-73fc608f1330"],
+
+Cell["So let\[CloseCurlyQuote]s get conservation of stress-energy:", "Text",ExpressionUUID->"0ae42359-0448-4bfa-a46d-530884d0c334"],
+
+Cell[BoxData[
+ RowBox[{"0", "\[Equal]", 
+  RowBox[{"IndexCollect", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"CD", "[", "a", "]"}], "@", "RHS"}], "//", "ToCanonical"}], ",", 
+    RowBox[{
+     RowBox[{"CD", "[", 
+      RowBox[{"-", "b"}], "]"}], "[", 
+     RowBox[{"Phi", "[", "]"}], "]"}]}], "]"}]}]], "Input",ExpressionUUID->\
+"6381e648-68d0-4df9-8dd3-5efda378949b"],
+
+Cell["\<\
+As expected, this is degenerate with the scalar equation of motion.
+
+Let\[CloseCurlyQuote]s do something harder now.\
+\>", "Text",ExpressionUUID->"b049364d-3458-4056-b3ea-f6cc0ca9926a"],
+
+Cell[BoxData[
+ RowBox[{"L", "=", 
+  RowBox[{
+   RowBox[{"Sqrt", "[", 
+    RowBox[{"-", 
+     RowBox[{"Detmetric", "[", "]"}]}], "\[InvisibleSpace]", "]"}], 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"MPlanck", "^", "2"}], "/", "2"}], 
+      RowBox[{"G", "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}], 
+      RowBox[{"RicciScalarCD", "[", "]"}]}], "-", 
+     RowBox[{
+      RowBox[{"1", "/", "2"}], "*", 
+      RowBox[{
+       RowBox[{"CD", "[", 
+        RowBox[{"-", "b"}], "]"}], "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}], "*", 
+      RowBox[{
+       RowBox[{"CD", "[", "b", "]"}], "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}]}], "-", 
+     RowBox[{"V", "[", 
+      RowBox[{"Phi", "[", "]"}], "]"}], "+", 
+     RowBox[{
+      RowBox[{"F", "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}], 
+      RowBox[{"EinsteinCD", "[", 
+       RowBox[{"a", ",", "b"}], "]"}], 
+      RowBox[{
+       RowBox[{"CD", "[", 
+        RowBox[{"-", "a"}], "]"}], "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}], 
+      RowBox[{
+       RowBox[{"CD", "[", 
+        RowBox[{"-", "b"}], "]"}], "[", 
+       RowBox[{"Phi", "[", "]"}], "]"}]}]}], ")"}]}]}]], "Input",ExpressionUUI\
+D->"d93f8763-cd1a-446a-b689-389eea676880"],
+
+Cell["\<\
+Calculating the equations of motion for this action by hand is a right royal \
+pain. Let\[CloseCurlyQuote]s see how xTensor does.\
+\>", "Text",ExpressionUUID->"dee584c5-dcc2-4d1a-8909-f69118f8df59"],
+
+Cell[BoxData[
+ RowBox[{"Lpert", "=", 
+  RowBox[{"ToCanonical", "@", 
+   RowBox[{"ContractMetric", "@", 
+    RowBox[{"ExpandPerturbation", "@", 
+     RowBox[{"Perturbation", "@", "L"}]}]}]}]}]], "Input",ExpressionUUID->\
+"48956a2f-9eab-478e-bfcd-53a039176e30"],
+
+Cell["The scalar EOM:", "Text",ExpressionUUID->"3c7a4707-1116-44d1-afdc-1d87bb0b2ee9"],
+
+Cell[BoxData[
+ RowBox[{"0", "==", 
+  RowBox[{"(", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"VarD", "[", 
+         RowBox[{
+          RowBox[{"PertPhi", "[", 
+           RowBox[{"LI", "[", "1", "]"}], "]"}], ",", "CD"}], "]"}], "[", 
+        "Lpert", "]"}], "/", 
+       RowBox[{"Sqrt", "[", 
+        RowBox[{"-", 
+         RowBox[{"Detmetric", "[", "]"}]}], "]"}]}], "/.", 
+      RowBox[{
+       RowBox[{"delta", "[", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"LI", "[", "1", "]"}]}], ",", 
+         RowBox[{"LI", "[", "1", "]"}]}], "]"}], "\[Rule]", "1"}]}], "//", 
+     "ToCanonical"}], "//", "Simplify"}], ")"}]}]], "Input",ExpressionUUID->\
+"5c757037-09ca-442b-8256-8bb3b702450a"],
+
+Cell["The metric EOM:", "Text",ExpressionUUID->"18fd696a-ae87-4394-ba14-de2025c77e85"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"RHS", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      RowBox[{"2", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"-", 
+             RowBox[{
+              RowBox[{"VarD", "[", 
+               RowBox[{
+                RowBox[{"metpert", "[", 
+                 RowBox[{
+                  RowBox[{"LI", "[", "1", "]"}], ",", "a", ",", "b"}], "]"}], 
+                ",", "CD"}], "]"}], "[", "Lpert", "]"}]}], "/", 
+            RowBox[{"Sqrt", "[", 
+             RowBox[{"-", 
+              RowBox[{"Detmetric", "[", "]"}]}], "]"}]}], "/.", 
+           RowBox[{
+            RowBox[{"delta", "[", 
+             RowBox[{
+              RowBox[{"-", 
+               RowBox[{"LI", "[", "1", "]"}]}], ",", 
+              RowBox[{"LI", "[", "1", "]"}]}], "]"}], "\[Rule]", "1"}]}], "//", 
+          RowBox[{"SeparateMetric", "[", "metric", "]"}]}], "//", 
+         "RicciToEinstein"}], ")"}]}], "//", "Expand"}], "//", 
+     "ContractMetric"}], "//", "ToCanonical"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"0", "\[Equal]", "RHS"}]}], "Input",ExpressionUUID->"80d3906e-2196-\
+4576-b694-1a46f5cf5ea1"],
+
+Cell["\<\
+Hideous, isn\[CloseCurlyQuote]t it? We can actually simplify this somewhat, \
+by ordering covariant derivatives, as follows. There are commands available \
+to determine what order you want things sorted in. I think it defaults to \
+lexicographic ordering.\
+\>", "Text",ExpressionUUID->"a0eb5738-c49d-4db6-bc24-f0b74043d327"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SortCovDs", "[", "RHS", "]"}], "//", "ToCanonical"}]], "Input",Expr\
+essionUUID->"118bf183-ae6f-44ca-bc3a-083d206cf9ca"],
+
+Cell["\<\
+Just for fun, here we derive the Lovelock tensor from the Gauss-Bonnet term \
+in the action.\
+\>", "Text",ExpressionUUID->"fb112721-9a60-4bc1-a9d6-af7d0a6f90ff"],
+
+Cell[BoxData[
+ RowBox[{"L", "=", 
+  RowBox[{
+   RowBox[{"Sqrt", "[", 
+    RowBox[{"-", 
+     RowBox[{"Detmetric", "[", "]"}]}], "]"}], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"RicciScalarCD", "[", "]"}], "^", "2"}], "-", 
+     RowBox[{"4", 
+      RowBox[{"RicciCD", "[", 
+       RowBox[{
+        RowBox[{"-", "a"}], ",", 
+        RowBox[{"-", "b"}]}], "]"}], 
+      RowBox[{"RicciCD", "[", 
+       RowBox[{"a", ",", "b"}], "]"}]}], "+", 
+     RowBox[{
+      RowBox[{"RiemannCD", "[", 
+       RowBox[{"a", ",", "b", ",", "c", ",", "d"}], "]"}], 
+      RowBox[{"RiemannCD", "[", 
+       RowBox[{
+        RowBox[{"-", "a"}], ",", 
+        RowBox[{"-", "b"}], ",", 
+        RowBox[{"-", "c"}], ",", 
+        RowBox[{"-", "d"}]}], "]"}]}]}], ")"}]}]}]], "Input",ExpressionUUID->\
+"75ec0d53-9945-4a85-9ad3-f99a417e75df"],
+
+Cell[BoxData[
+ RowBox[{"Lpert", "=", 
+  RowBox[{"ToCanonical", "@", 
+   RowBox[{"ContractMetric", "@", 
+    RowBox[{"ExpandPerturbation", "@", 
+     RowBox[{"Perturbation", "@", "L"}]}]}]}]}]], "Input",ExpressionUUID->\
+"c3d27d88-e474-4d5e-ba54-bbdc199110b9"],
+
+Cell[BoxData[
+ RowBox[{"RHS", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"2", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"-", 
+            RowBox[{
+             RowBox[{"VarD", "[", 
+              RowBox[{
+               RowBox[{"metpert", "[", 
+                RowBox[{
+                 RowBox[{"LI", "[", "1", "]"}], ",", "a", ",", "b"}], "]"}], 
+               ",", "CD"}], "]"}], "[", "Lpert", "]"}]}], "/", 
+           RowBox[{"Sqrt", "[", 
+            RowBox[{"-", 
+             RowBox[{"Detmetric", "[", "]"}]}], "]"}]}], "/.", 
+          RowBox[{
+           RowBox[{"delta", "[", 
+            RowBox[{
+             RowBox[{"-", 
+              RowBox[{"LI", "[", "1", "]"}]}], ",", 
+             RowBox[{"LI", "[", "1", "]"}]}], "]"}], "\[Rule]", "1"}]}], "//", 
+         RowBox[{"SeparateMetric", "[", "metric", "]"}]}], "//", 
+        "RicciToEinstein"}], ")"}]}], "//", "Expand"}], "//", 
+    "ContractMetric"}], "//", "ToCanonical"}]}]], "Input",ExpressionUUID->\
+"0993a2f8-afbf-469f-861a-ceda27cee182"],
+
+Cell["\<\
+This is clearly hideous. We need to make this prettier, and we\
+\[CloseCurlyQuote]ll use a variety of techniques to do so. The following rule \
+is a rule that says \[OpenCurlyDoubleQuote]If you\[CloseCurlyQuote]re taking \
+a derivative of a tensor, and it could be written as a divergence, then \
+commute derivatives until it is so.\[CloseCurlyDoubleQuote] It\
+\[CloseCurlyQuote]s a really useful rule.\
+\>", "Text",ExpressionUUID->"0efcf79f-a5e0-4a80-8d74-d4408f984512"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"PreferDivOfRule", "[", "tens_", "]"}], ":=", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"bigexpr", ":", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"CD", "[", "b_", "]"}], "@", 
+         RowBox[{
+          RowBox[{"CD", "[", "a_", "]"}], "[", "expr_", "]"}]}], "/;", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"!", 
+           RowBox[{"FreeQ", "[", 
+            RowBox[{"expr", ",", 
+             RowBox[{"tens", "[", 
+              RowBox[{"___", ",", 
+               RowBox[{"ChangeIndex", "[", "b", "]"}], ",", "___"}], "]"}]}], 
+            "]"}]}], "&&", 
+          RowBox[{"FreeQ", "[", 
+           RowBox[{"expr", ",", 
+            RowBox[{"tens", "[", 
+             RowBox[{"___", ",", 
+              RowBox[{"ChangeIndex", "[", "a", "]"}], ",", "___"}], "]"}]}], 
+           "]"}]}], ")"}]}], ")"}]}], ")"}], "\[RuleDelayed]", 
+    RowBox[{"CommuteCovDs", "[", 
+     RowBox[{"bigexpr", ",", "CD", ",", 
+      RowBox[{"{", 
+       RowBox[{"a", ",", "b"}], "}"}]}], "]"}]}]}], ";"}]], "Input",Expression\
+UUID->"dabb74a6-748a-4776-a0bd-d57904cfe296"],
+
+Cell["\<\
+We now write things in terms of the Ricci tensor, and apply this rule, before \
+tidying things up.\
+\>", "Text",ExpressionUUID->"ecc34fc8-7a2c-4790-b26a-bdb9c52f92d1"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"RHS", "//", "EinsteinToRicci"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"working", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"%", "/.", 
+      RowBox[{"PreferDivOfRule", "[", "RicciCD", "]"}]}], "//", "Expand"}], "//",
+     "ContractMetric"}], "//", "ToCanonical"}]}]}], "Input",ExpressionUUID->\
+"94076523-0f45-4145-b26b-b9180f9e5020"],
+
+Cell["\<\
+Finally, expressions are known for various derivatives of the Ricci tensor \
+and Riemann tensor. These rules are all provided in the documentation of \
+xTensor.\
+\>", "Text",ExpressionUUID->"a304d3cf-ec94-44a8-95e4-56825f4d1382"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"RuleDivGradRiemann", "=", 
+   RowBox[{"MakeRule", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"CD", "[", "a", "]"}], "@", 
+        RowBox[{
+         RowBox[{"CD", "[", 
+          RowBox[{"-", "e"}], "]"}], "@", 
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "a"}], ",", 
+           RowBox[{"-", "b"}], ",", 
+           RowBox[{"-", "c"}], ",", 
+           RowBox[{"-", "d"}]}], "]"}]}]}], ",", 
+       RowBox[{
+        RowBox[{"-", 
+         RowBox[{
+          RowBox[{"CD", "[", 
+           RowBox[{"-", "e"}], "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "d"}], "]"}], "@", 
+           RowBox[{"RicciCD", "[", 
+            RowBox[{
+             RowBox[{"-", "b"}], ",", 
+             RowBox[{"-", "c"}]}], "]"}]}]}]}], "+", 
+        RowBox[{
+         RowBox[{"CD", "[", 
+          RowBox[{"-", "e"}], "]"}], "@", 
+         RowBox[{
+          RowBox[{"CD", "[", 
+           RowBox[{"-", "c"}], "]"}], "@", 
+          RowBox[{"RicciCD", "[", 
+           RowBox[{
+            RowBox[{"-", "b"}], ",", 
+            RowBox[{"-", "d"}]}], "]"}]}]}], "-", 
+        RowBox[{
+         RowBox[{"RicciCD", "[", 
+          RowBox[{
+           RowBox[{"-", "f"}], ",", 
+           RowBox[{"-", "e"}]}], "]"}], 
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "b"}], ",", "f", ",", 
+           RowBox[{"-", "c"}], ",", 
+           RowBox[{"-", "d"}]}], "]"}]}], "+", 
+        RowBox[{
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "f"}], ",", 
+           RowBox[{"-", "g"}], ",", 
+           RowBox[{"-", "c"}], ",", 
+           RowBox[{"-", "d"}]}], "]"}], 
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "b"}], ",", "f", ",", 
+           RowBox[{"-", "e"}], ",", "g"}], "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "f"}], ",", 
+           RowBox[{"-", "b"}], ",", 
+           RowBox[{"-", "g"}], ",", 
+           RowBox[{"-", "d"}]}], "]"}], 
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "c"}], ",", "g", ",", 
+           RowBox[{"-", "e"}], ",", "f"}], "]"}]}], "+", 
+        RowBox[{
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "f"}], ",", 
+           RowBox[{"-", "b"}], ",", 
+           RowBox[{"-", "g"}], ",", 
+           RowBox[{"-", "c"}]}], "]"}], 
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "d"}], ",", "g", ",", 
+           RowBox[{"-", "e"}], ",", "f"}], "]"}]}]}]}], "}"}], ",", 
+     RowBox[{"UseSymmetries", "\[Rule]", "True"}], ",", 
+     RowBox[{"MetricOn", "\[Rule]", "All"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"RuleDivGradRicci", "=", 
+   RowBox[{"MakeRule", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"CD", "[", "b", "]"}], "@", 
+        RowBox[{
+         RowBox[{"CD", "[", 
+          RowBox[{"-", "c"}], "]"}], "@", 
+         RowBox[{"RicciCD", "[", 
+          RowBox[{
+           RowBox[{"-", "a"}], ",", 
+           RowBox[{"-", "b"}]}], "]"}]}]}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"1", "/", "2"}], 
+         RowBox[{
+          RowBox[{"CD", "[", 
+           RowBox[{"-", "c"}], "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "a"}], "]"}], "@", 
+           RowBox[{"RicciScalarCD", "[", "]"}]}]}]}], "+", 
+        RowBox[{
+         RowBox[{"RicciCD", "[", 
+          RowBox[{
+           RowBox[{"-", "f"}], ",", 
+           RowBox[{"-", "a"}]}], "]"}], 
+         RowBox[{"RicciCD", "[", 
+          RowBox[{
+           RowBox[{"-", "c"}], ",", "f"}], "]"}]}], "-", 
+        RowBox[{
+         RowBox[{"RicciCD", "[", 
+          RowBox[{
+           RowBox[{"-", "f"}], ",", 
+           RowBox[{"-", "g"}]}], "]"}], 
+         RowBox[{"RiemannCD", "[", 
+          RowBox[{
+           RowBox[{"-", "a"}], ",", "g", ",", 
+           RowBox[{"-", "c"}], ",", "f"}], "]"}]}]}]}], "}"}], ",", 
+     RowBox[{"UseSymmetries", "\[Rule]", "True"}], ",", 
+     RowBox[{"MetricOn", "\[Rule]", "All"}]}], "]"}]}], ";"}]}], "Input",Expre\
+ssionUUID->"041326fb-0897-461b-8af5-8590f595cc8a"],
+
+Cell["\<\
+Use these rules, and throw in a conversion from Ricci to Einstein and back to \
+simplify some divergences of Ricci tensors.\
+\>", "Text",ExpressionUUID->"46624009-4e17-4814-bd46-c27160520bd0"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"working", "/.", "RuleDivGradRiemann"}], "/.", 
+   "RuleDivGradRicci"}], "//", "ToCanonical"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"%", "//", "RicciToEinstein"}], "//", "ToCanonical"}], "//", 
+    "EinsteinToRicci"}], "//", "ToCanonical"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"%", "/", "2"}], "//", "Expand"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"IndexCollect", "[", 
+  RowBox[{"%", ",", 
+   RowBox[{"metric", "[", 
+    RowBox[{
+     RowBox[{"-", "a"}], ",", 
+     RowBox[{"-", "b"}]}], "]"}]}], "]"}]}], "Input",ExpressionUUID->\
+"0f8c0f07-51e7-4bbe-a8c6-e35197012eb2"],
+
+Cell["\<\
+I\[CloseCurlyQuote]ve just divided by two in the end here and brought out the \
+metric as a coefficient. You can compare this to the tensor we calculated \
+above.\
+\>", "Text",ExpressionUUID->"8ea86f08-46c2-47a6-a746-ae06fb1ef932"],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", 
+  RowBox[{"RHS", ",", "L", ",", "Lpert", ",", "working"}], "]"}]], "Input",Exp\
+ressionUUID->"ed2ac0b8-bb9a-40ea-b788-30a9def57fde"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Part 4. Coordinate Systems", "Section",ExpressionUUID->"b77c9d4b-5e2f-4752-9284-70c2121352c9"],
+
+Cell["\<\
+To use coordinate systems, we need to import a new package, called xCoba \
+(short for \[OpenCurlyDoubleQuote]coordinate bases\[CloseCurlyDoubleQuote]). \
+This package attempts to be very general, but I find it rather clunky. I \
+recommend avoiding xCoba until the very last moment, if at all possible.\
+\>", "Text",ExpressionUUID->"70dff6f1-cd11-4911-b524-c6ce00788698"],
+
+Cell[BoxData[
+ RowBox[{"<<", "xAct`xCoba`"}]], "Input",ExpressionUUID->"613ce0d2-c5db-4f48-aedc-4899aa79ce72"],
+
+Cell["\<\
+We\[CloseCurlyQuote]ll describe an almost-Schwarzschild metric. The first \
+step is to define a basis, which we will call \[OpenCurlyDoubleQuote]B\
+\[CloseCurlyDoubleQuote]. It\[CloseCurlyQuote]s associated with the manifold \
+M4, and has indices {0,1,2,3}, given by the appropriate coordinates.\
+\>", "Text",ExpressionUUID->"cbfe64b4-809b-4e45-8b3b-44392bd6f15f"],
+
+Cell[BoxData[
+ RowBox[{"DefChart", "[", 
+  RowBox[{"B", ",", "M4", ",", 
+   RowBox[{"{", 
+    RowBox[{"0", ",", "1", ",", "2", ",", "3"}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"t", "[", "]"}], ",", 
+     RowBox[{"r", "[", "]"}], ",", 
+     RowBox[{"\[Theta]", "[", "]"}], ",", 
+     RowBox[{"\[Phi]", "[", "]"}]}], "}"}]}], "]"}]], "Input",ExpressionUUID->\
+"e2321f57-af40-4bfa-a875-aa0c957f01dd"],
+
+Cell["\<\
+Note that to get those Greek symbols, I typed \[OpenCurlyDoubleQuote]ESC th \
+ESC\[CloseCurlyDoubleQuote] for \[Theta], and \[OpenCurlyDoubleQuote]ESC ph \
+ESC\[CloseCurlyDoubleQuote] for \[Phi].\
+\>", "Text",ExpressionUUID->"3012fe34-835a-42f5-8c20-a9678fe857ef"],
+
+Cell["\<\
+Now, we need to define our metric. We\[CloseCurlyQuote]ll use the scalar \
+function F that we defined previously.\
+\>", "Text",ExpressionUUID->"5d4a7de7-0af4-4a78-8da6-b8f678cbdeee"],
+
+Cell[BoxData[
+ RowBox[{"MatrixForm", "[", 
+  RowBox[{"metricarray", "=", 
+   RowBox[{"{", "\n", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"F", "[", 
+         RowBox[{"r", "[", "]"}], "]"}]}], ",", "0", ",", "0", ",", "0"}], 
+      "}"}], ",", "\n", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", 
+       RowBox[{"1", "/", 
+        RowBox[{"F", "[", 
+         RowBox[{"r", "[", "]"}], "]"}]}], ",", "0", ",", "0"}], "}"}], ",", 
+     "\n", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", 
+       RowBox[{
+        RowBox[{"r", "[", "]"}], "^", "2"}], ",", "0"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0", ",", "0", ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"r", "[", "]"}], "^", "2"}], 
+        RowBox[{
+         RowBox[{"Sin", "[", 
+          RowBox[{"\[Theta]", "[", "]"}], "]"}], "^", "2"}]}]}], "}"}]}], 
+    "\n", "}"}]}], "]"}]], "Input",ExpressionUUID->"0aa3a82e-888d-482f-ad01-\
+a33dfb254f6d"],
+
+Cell["We need to tell xCoba that this is our metric:", "Text",ExpressionUUID->"c5774878-96f5-4f57-9266-0b03241497c8"],
+
+Cell[BoxData[
+ RowBox[{"MetricInBasis", "[", 
+  RowBox[{"metric", ",", 
+   RowBox[{"-", "B"}], ",", "metricarray"}], "]"}]], "Input",ExpressionUUID->\
+"fdac493a-03a1-41e2-91b7-465ef8be08f8"],
+
+Cell["Now, let\[CloseCurlyQuote]s calculate stuff for our metric.", "Text",ExpressionUUID->"3436f148-9dd0-4114-82be-7cfe69a12248"],
+
+Cell[BoxData[
+ RowBox[{"MetricCompute", "[", 
+  RowBox[{"metric", ",", "B", ",", "All", ",", 
+   RowBox[{"CVSimplify", "\[Rule]", "Simplify"}]}], "]"}]], "Input",Expression\
+UUID->"33217fd6-8c55-42e1-b55b-66ee54f81aa0"],
+
+Cell["\<\
+If we want to see these values, we first need to put it in the appropriate \
+basis, and then ask xCoba to substitute in the appropriate value. Note that \
+you may need to use ToValues multiple times.\
+\>", "Text",ExpressionUUID->"29036522-1602-444b-a1fe-1fc6a1675ff0"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"RicciScalarCD", "[", "]"}], "//", 
+   RowBox[{"ToBasis", "[", "B", "]"}]}], "//", "ToValues"}]], "Input",Expressi\
+onUUID->"8a2277ce-6d5c-4611-b7ab-66ade23c63aa"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"EinsteinCD", "[", 
+      RowBox[{
+       RowBox[{"-", "a"}], ",", 
+       RowBox[{"-", "b"}]}], "]"}], "//", 
+     RowBox[{"ToBasis", "[", "B", "]"}]}], "//", "ComponentArray"}], "//", 
+   "ToValues"}], "//", "MatrixForm"}]], "Input",ExpressionUUID->"114de60f-\
+585b-4db9-b306-735873872989"],
+
+Cell["\<\
+Want the wave equation for a scalar field that only depends on r? No problem. \
+We just need to tell xCoba how the scalar field looks in the appropriate \
+basis.\
+\>", "Text",ExpressionUUID->"c2907678-43ac-469f-93d2-c10690414951"],
+
+Cell[BoxData[
+ RowBox[{"DefScalarFunction", "[", "\[Phi]0", "]"}]], "Input",ExpressionUUID->"c64e1f7d-5cfc-45db-beb0-538af490fea1"],
+
+Cell[BoxData[
+ RowBox[{"ComponentValue", "[", 
+  RowBox[{
+   RowBox[{"Phi", "[", "]"}], ",", 
+   RowBox[{"\[Phi]0", "[", 
+    RowBox[{"r", "[", "]"}], "]"}]}], "]"}]], "Input",ExpressionUUID->\
+"b90f87f5-6c8c-4ce1-b9fd-bd98a62dc7e2"],
+
+Cell["\<\
+Now, describe the scalar wave equation. Note that we separate out the metric \
+dependence to make lives simpler (we don\[CloseCurlyQuote]t need to do things \
+this way, but it is easier).\
+\>", "Text",ExpressionUUID->"83cdf231-c31e-40b8-9190-b075e35db60f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"CD", "[", "a", "]"}], "@", 
+   RowBox[{
+    RowBox[{"CD", "[", 
+     RowBox[{"-", "a"}], "]"}], "@", 
+    RowBox[{"Phi", "[", "]"}]}]}], "//", 
+  RowBox[{"SeparateMetric", "[", "metric", "]"}]}]], "Input",ExpressionUUID->\
+"4404bf1e-a996-460c-801a-2b8c16f86d46"],
+
+Cell["Change to a basis:", "Text",ExpressionUUID->"2e1ea897-91fe-49c3-a563-51b608c6a85a"],
+
+Cell[BoxData[
+ RowBox[{"%", "//", 
+  RowBox[{"ToBasis", "[", "B", "]"}]}]], "Input",ExpressionUUID->"91945ee8-\
+f5c4-4f0f-83de-a8f8d8195265"],
+
+Cell["Now, we need to trace over the basis dummy indices.", "Text",ExpressionUUID->"0ba37055-190b-4fd7-8751-465fbd423cea"],
+
+Cell[BoxData[
+ RowBox[{"%", "//", "TraceBasisDummy"}]], "Input",ExpressionUUID->"6e390e2b-06c3-412e-bd0a-0469118219ab"],
+
+Cell["\<\
+And finally, convert all these into their appropriate values.\
+\>", "Text",ExpressionUUID->"5945b405-cae1-4463-9887-ac15c62395f6"],
+
+Cell[BoxData[
+ RowBox[{"%", "//", "ToValues"}]], "Input",ExpressionUUID->"0673232d-b8ca-416d-bb32-531383d33427"],
+
+Cell["Voila, scalar wave equation.", "Text",ExpressionUUID->"4d6c0c55-55d6-40aa-b010-4aab5051d657"],
+
+Cell["\<\
+Unfortunately, doing perturbation theory about a background in this manner is \
+rather clunky. I\[CloseCurlyQuote]ll demonstrate it for the scalar field; the \
+metric gets messy.
+
+Start by calculating the perturbation to the wave equation, setting the \
+metric perturbations to vanishing.\
+\>", "Text",ExpressionUUID->"3294bdc8-fa20-445a-9faa-684cdee86fa7"],
+
+Cell[BoxData[
+ RowBox[{"EOM", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ExpandPerturbation", "@", 
+     RowBox[{"Perturbed", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"CD", "[", "a", "]"}], "@", 
+        RowBox[{
+         RowBox[{"CD", "[", 
+          RowBox[{"-", "a"}], "]"}], "@", 
+         RowBox[{"Phi", "[", "]"}]}]}], ",", "1"}], "]"}]}], "/.", 
+    RowBox[{
+     RowBox[{"metpert", "[", "___", "]"}], "\[Rule]", "0"}]}], "//", 
+   RowBox[{"SeparateMetric", "[", "metric", "]"}]}]}]], "Input",ExpressionUUID\
+->"bb43ddbc-b24d-428f-9135-f7178bd3c249"],
+
+Cell["Repeat as above.", "Text",ExpressionUUID->"a53c5b78-463c-4b73-9082-adf26ab50339"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"EOM", "//", 
+     RowBox[{"ToBasis", "[", "B", "]"}]}], "//", "TraceBasisDummy"}], "//", 
+   "ToValues"}], "//", "ToValues"}]], "Input",ExpressionUUID->"aaadbbf8-9675-\
+42ba-bcab-9bc1291792ac"],
+
+Cell["\<\
+Note that here we need to use ToValues twice. Also note that because we\
+\[CloseCurlyQuote]re working in a coordinate basis, we\[CloseCurlyQuote]ve \
+got explicit indices appearing now, rather than nice covariant things. Note \
+that because we haven\[CloseCurlyQuote]t specified how that perturbation is \
+behaving in the coordinate system, the covariant derivatives aren\
+\[CloseCurlyQuote]t expanded appropriately. We can do so as follows.\
+\>", "Text",ExpressionUUID->"1536c6fc-40b8-4128-b07e-d8c0cd3f1a56"],
+
+Cell[BoxData[
+ RowBox[{"DefScalarFunction", "[", "\[Delta]\[Phi]", "]"}]], "Input",Expressio\
+nUUID->"5f7c1c3b-8dee-4610-8b1e-d8c11b56135c"],
+
+Cell[BoxData[
+ RowBox[{"ComponentValue", "[", 
+  RowBox[{
+   RowBox[{"PertPhi", "[", 
+    RowBox[{"LI", "[", "1", "]"}], "]"}], ",", 
+   RowBox[{"\[Delta]\[Phi]", "[", 
+    RowBox[{
+     RowBox[{"t", "[", "]"}], ",", 
+     RowBox[{"r", "[", "]"}], ",", 
+     RowBox[{"\[Theta]", "[", "]"}], ",", 
+     RowBox[{"\[Phi]", "[", "]"}]}], "]"}]}], "]"}]], "Input",ExpressionUUID->\
+"a26e14f1-4c2c-4c5b-bf11-04e1814295ca"],
+
+Cell["\<\
+And here is the perturbed equation of motion (to linear order in field \
+perturbations).\
+\>", "Text",ExpressionUUID->"a48a2776-e250-4981-86cf-460bdd8ecc3b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"EOM", "//", 
+     RowBox[{"ToBasis", "[", "B", "]"}]}], "//", "TraceBasisDummy"}], "//", 
+   "ToValues"}], "//", "ToValues"}]], "Input",ExpressionUUID->"ea21a430-bc18-\
+4a80-98d7-c2a1441e6895"],
+
+Cell["\<\
+You can see why this gets a little clunky... but at least it works!\
+\>", "Text",ExpressionUUID->"3a66848c-5c98-4738-ada7-26dd01704892"],
+
+Cell[BoxData[
+ RowBox[{"Clear", "[", "EOM", "]"}]], "Input",ExpressionUUID->"cc0e6eff-af16-4ace-a6a8-c9bad46a62f3"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Part 5. Perturbation Theory about FRW", "Section",ExpressionUUID->"5c2fba75-a450-429e-bd22-9704a7b13ad2"],
+
+Cell["\<\
+This demonstration uses the xPand package, which must be installed \
+separately. This is an incredibly powerful package. I\[CloseCurlyQuote]ll \
+show some generic stuff, and then demonstrate how I used it to do second \
+order perturbation theory about FRW. Because of various definitions built \
+into xPand, I\[CloseCurlyQuote]m going to clear the kernel before proceeding.\
+\>", "Text",ExpressionUUID->"b1c45177-d26c-4967-a299-e65b4b5f0a51"],
+
+Cell[BoxData[
+ RowBox[{"Quit", "[", "]"}]], "Input",ExpressionUUID->"9fd2ef08-7678-4155-935b-dd933c9a4d86"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"<<", "xAct/xPand.m"}], ";"}]], "Input",ExpressionUUID->"077d0c8f-ff14-4668-a818-8685eb628b1d"],
+
+Cell["\<\
+Once again, define a manifold, and define a metric. The optional arguments \
+provided to the metric definition here specify how covariant derivatives will \
+be typeset.\
+\>", "Text",ExpressionUUID->"9d567e5e-c2c0-4656-b24b-4acf669de4e7"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"DefManifold", "[", 
+   RowBox[{"M", ",", "4", ",", 
+    RowBox[{"{", 
+     RowBox[{"b", ",", "c", ",", "d", ",", "e"}], "}"}]}], "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DefMetric", "[", 
+   RowBox[{
+    RowBox[{"-", "1"}], ",", 
+    RowBox[{"g", "[", 
+     RowBox[{
+      RowBox[{"-", "b"}], ",", 
+      RowBox[{"-", "c"}]}], "]"}], ",", "CD", ",", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<;\>\"", ",", "\"\<\!\(\*OverscriptBox[\(\[Del]\), \(_\)]\)\>\""}], 
+     "}"}], ",", 
+    RowBox[{
+    "PrintAs", "\[Rule]", "\"\<\!\(\*OverscriptBox[\(g\), \(_\)]\)\>\""}]}], 
+   "]"}], ";"}]}], "Input",ExpressionUUID->"acad5882-6e0d-4eaf-b046-\
+816b16a0aa9a"],
+
+Cell["\<\
+To do perturbation theory, we ask xPand to define a 3+1 decomposition. n is \
+the normal vector, h is the spatial metric, cd is the covariant derivative \
+associated with the spatial metric. The next argument is how such covariant \
+derivatives are written. The final argument is the form of the metric that we \
+want. There are a lot of options, including Minkowski, FLCurved, FLFlat, \
+Bianchi (general), BianchiA (Type A Bianchi), and BianchiI (for Type I).\
+\>", "Text",ExpressionUUID->"130c75ad-12b8-4a52-96d3-a889aeec758e"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SetSlicing", "[", 
+   RowBox[{"g", ",", "n", ",", "h", ",", "cd", ",", 
+    RowBox[{"{", 
+     RowBox[{
+     "\"\<|\>\"", ",", "\"\<\!\(\*OverscriptBox[\(D\), \(_\)]\)\>\""}], "}"}],
+     ",", "\"\<FLCurved\>\""}], "]"}], ";"}]], "Input",ExpressionUUID->\
+"901f6a1f-1802-41a5-93d5-a8dfa023c767"],
+
+Cell["\<\
+Next, we ask xPand to define metric perturbations (dg). We also ask it to \
+define the matter velocity and matter velocity perturbation, u and du.\
+\>", "Text",ExpressionUUID->"a306c35c-bd25-4c9b-9feb-6b14e362ace9"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"DefMetricFields", "[", 
+   RowBox[{"g", ",", "dg", ",", "h"}], "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"DefMatterFields", "[", 
+   RowBox[{"u", ",", "du", ",", "h"}], "]"}], ";"}]}], "Input",ExpressionUUID->\
+"6792012d-60fa-4857-9707-a94bbf069f4d"],
+
+Cell["\<\
+The default colouring is terrible. This just makes things readable.\
+\>", "Text",ExpressionUUID->"269daa83-d3c9-424e-b817-13d271622f5b"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MakeBoxes", "[", 
+   RowBox[{"\[Epsilon]", ",", "StandardForm"}], "]"}], ":=", 
+  "\[IndentingNewLine]", 
+  RowBox[{"StyleBox", "[", 
+   RowBox[{
+    RowBox[{"ToString", "[", "$PerturbationParameter", "]"}], ",", 
+    RowBox[{"FontColor", "\[Rule]", 
+     RowBox[{"RGBColor", "[", 
+      RowBox[{"0.0", ",", " ", "0.0", ",", " ", "1"}], "]"}]}]}], 
+   "]"}]}]], "Input",ExpressionUUID->"290437ce-874b-4228-af27-0bafa01129df"],
+
+Cell["\<\
+This is a function that I define to simplify the use of the xPand master \
+function, ToxPand.\
+\>", "Text",ExpressionUUID->"6b825dc6-c473-42f8-94c7-f2f72a58a58a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyToxPand", "[", 
+   RowBox[{"expr_", ",", "gauge_", ",", "order_"}], "]"}], ":=", 
+  RowBox[{"ToxPand", "[", 
+   RowBox[{
+   "expr", ",", "dg", ",", "u", ",", "du", ",", "h", ",", " ", "gauge", ",", 
+    "order"}], "]"}]}]], "Input",ExpressionUUID->"a8440ea8-0f0c-4fd2-ab27-\
+c84739a0d273"],
+
+Cell["This is a function we define just to make things neater.", "Text",ExpressionUUID->"b1894352-aae3-4b10-a650-daa36ac31ee6"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"org", "[", "expr_", "]"}], ":=", 
+  RowBox[{"NoScalar", "@", 
+   RowBox[{"Collect", "[", 
+    RowBox[{
+     RowBox[{"ContractMetric", "[", "expr", "]"}], ",", 
+     "$PerturbationParameter", ",", "ToCanonical"}], "]"}]}]}]], "Input",Expre\
+ssionUUID->"5004d574-39af-4522-a2dd-9d997912a0d5"],
+
+Cell["Here is the general perturbed metric.", "Text",ExpressionUUID->"028662f1-c5d0-48ab-86e5-80a94e6b8aae"],
+
+Cell[BoxData[
+ RowBox[{"VisualizeTensor", "[", 
+  RowBox[{
+   RowBox[{"MyToxPand", "[", 
+    RowBox[{
+     RowBox[{"g", "[", 
+      RowBox[{
+       RowBox[{"-", "b"}], ",", 
+       RowBox[{"-", "c"}]}], "]"}], ",", "\"\<AnyGauge\>\"", ",", "1"}], 
+    "]"}], ",", "h"}], "]"}]], "Input",ExpressionUUID->"782227dc-7f1f-48b4-\
+869b-60bbd8b8fe35"],
+
+Cell["\<\
+Note the use of \[OpenCurlyDoubleQuote]AnyGauge\[CloseCurlyDoubleQuote] as \
+our gauge. The other options are \
+\>", "Text",ExpressionUUID->"19e8c096-d6e2-49ef-8f96-ec0b756c1832"],
+
+Cell[BoxData[
+ RowBox[{"?", "$ListOfGauges"}]], "Input",ExpressionUUID->"49503d83-537f-46a4-a1f3-5b602acc192d"],
+
+Cell["\<\
+Let\[CloseCurlyQuote]s turn off the vector perturbations, but leave the \
+tensors on.\
+\>", "Text",ExpressionUUID->"051d0171-ead8-4bc2-9a51-dd30dc9dd468"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"$FirstOrderVectorPerturbations", "=", "False"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"$FirstOrderTensorPerturbations", "=", "True"}], ";"}]}], "Input",Ex\
+pressionUUID->"2b25d66c-0f7c-44fc-a24e-5b554999560f"],
+
+Cell["In Synchronous gauge, we then have", "Text",ExpressionUUID->"5bb5d6f1-1500-4c2a-b5bc-81b46995c170"],
+
+Cell[BoxData[
+ RowBox[{"VisualizeTensor", "[", 
+  RowBox[{
+   RowBox[{"MyToxPand", "[", 
+    RowBox[{
+     RowBox[{"g", "[", 
+      RowBox[{
+       RowBox[{"-", "b"}], ",", 
+       RowBox[{"-", "c"}]}], "]"}], ",", "\"\<SynchronousGauge\>\"", ",", 
+     "1"}], "]"}], ",", "h"}], "]"}]], "Input",ExpressionUUID->"6bdd50a6-a07d-\
+4806-a9ef-9edb10631af9"],
+
+Cell["Ok, let\[CloseCurlyQuote]s see what this can do.", "Text",ExpressionUUID->"b0fa808b-5c23-4f86-b961-784912eaed02"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"MyToxPand", "[", 
+   RowBox[{
+    RowBox[{"RicciScalarCD", "[", "]"}], ",", "\"\<NewtonGauge\>\"", ",", 
+    "2"}], "]"}], "//", "org"}]], "Input",ExpressionUUID->"a5819e9d-c6e3-477c-\
+b2d4-ca157db798df"],
+
+Cell["\<\
+Again, this has second order perturbations. We often don\[CloseCurlyQuote]t \
+want these; this time, we use the following rule to kill these.\
+\>", "Text",ExpressionUUID->"23e228b0-e393-4add-8b50-c3e57361d887"],
+
+Cell[BoxData[
+ RowBox[{"killsecondorder", ":=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{"bigexpr", ":", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"expr_", "[", 
+        RowBox[{
+         RowBox[{"LI", "[", "x_", "]"}], ",", 
+         RowBox[{"LI", "[", "y_", "]"}], ",", "___"}], "]"}], "/;", 
+       RowBox[{"x", ">", "1"}]}], ")"}]}], ")"}], "\[RuleDelayed]", 
+   "0"}]}]], "Input",ExpressionUUID->"a0b6c0a1-da24-4d6b-8597-41a5ca60fa9e"],
+
+Cell["Let\[CloseCurlyQuote]s try a tensor, and we\[CloseCurlyQuote]ll use \
+physical time.", "Text",ExpressionUUID->"92417aac-30e5-4d1a-a779-\
+34fc50477c5d"],
+
+Cell[BoxData[
+ RowBox[{"$ConformalTime", "=", "False"}]], "Input",ExpressionUUID->"a4a7ef2d-a540-47f9-a715-5439c21c0c93"],
+
+Cell[BoxData[
+ RowBox[{"VisualizeTensor", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"MyToxPand", "[", 
+      RowBox[{
+       RowBox[{"RicciCD", "[", 
+        RowBox[{
+         RowBox[{"-", "b"}], ",", 
+         RowBox[{"-", "c"}]}], "]"}], ",", "\"\<NewtonGauge\>\"", ",", "2"}], 
+      "]"}], "/.", "killsecondorder"}], "//", "org"}], ",", "h"}], 
+  "]"}]], "Input",ExpressionUUID->"3d2cfa6e-d621-48d9-9130-f096d364dda9"],
+
+Cell["\<\
+Now, be honest, how long would it have taken you to do that by hand?\
+\>", "Text",ExpressionUUID->"e13194f0-b0b2-4ed6-bb6f-f75cd7c18bee"],
+
+Cell["\<\
+Ok, time for the big finale. We\[CloseCurlyQuote]d like to do perturbation \
+theory in the action about Horndeski\[CloseCurlyQuote]s general second order \
+scalar tensor theory. These even take the computer a long time to compute, so \
+I\[CloseCurlyQuote]m only going to go to first order here (although I have \
+successfully extracted second order from it).\
+\>", "Text",ExpressionUUID->"fcba4988-49c2-4cd7-b9b1-981e08087527"],
+
+Cell[BoxData[{
+ RowBox[{"DefScalarFunction", "[", "V", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefScalarFunction", "[", "L3", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefScalarFunction", "[", "L4", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"DefScalarFunction", "[", "L5", "]"}]}], "Input",ExpressionUUID->\
+"ad46f330-41b7-4509-a451-221e792e77d3"],
+
+Cell["Define the first term.", "Text",ExpressionUUID->"455a8291-215c-4ec1-8e5c-f9a1b348b7bb"],
+
+Cell[BoxData[
+ RowBox[{"term1", "=", 
+  RowBox[{
+   RowBox[{"Sqrt", "[", 
+    RowBox[{"-", 
+     RowBox[{"Detg", "[", "]"}]}], "]"}], 
+   RowBox[{"V", "[", 
+    RowBox[{
+     RowBox[{"\[CurlyPhi]", "[", "]"}], ",", 
+     RowBox[{
+      RowBox[{"-", 
+       RowBox[{
+        RowBox[{"CD", "[", 
+         RowBox[{"-", "b"}], "]"}], "@", 
+        RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+      RowBox[{
+       RowBox[{
+        RowBox[{"CD", "[", "b", "]"}], "@", 
+        RowBox[{"\[CurlyPhi]", "[", "]"}]}], "/", "2"}]}]}], 
+    "]"}]}]}]], "Input",ExpressionUUID->"af4041ac-05c0-46e3-97b6-\
+aea7cb1839dc"],
+
+Cell["\<\
+And expand the first term. Note that xPand uses some conformal \
+transformations to get everything working, so when I divide off the metric \
+determinant, I need to divide off the scaled metric determinant. Just a \
+detail...\
+\>", "Text",ExpressionUUID->"daa11c7e-9889-4c86-87f3-62d71e0316e1"],
+
+Cell[BoxData[
+ RowBox[{"term1exp", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"MyToxPand", "[", 
+      RowBox[{"term1", ",", "\"\<NewtonGauge\>\"", ",", "1"}], "]"}], "/", 
+     RowBox[{"Sqrt", "[", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"Detg", "[", "]"}]}], 
+       RowBox[{
+        RowBox[{"Scalar", "[", 
+         RowBox[{"ah", "[", "]"}], "]"}], "^", "8"}]}], "]"}]}], "//", 
+    "Expand"}], "//", "org"}]}]], "Input",ExpressionUUID->"21a8f2b0-25ab-40a7-\
+aa40-298a5c822885"],
+
+Cell["Define the second term.", "Text",ExpressionUUID->"ffa51209-e754-4b65-9f93-d8185b79943f"],
+
+Cell[BoxData[
+ RowBox[{"term2", "=", 
+  RowBox[{
+   RowBox[{"Sqrt", "[", 
+    RowBox[{"-", 
+     RowBox[{"Detg", "[", "]"}]}], "]"}], 
+   RowBox[{"L3", "[", 
+    RowBox[{
+     RowBox[{"\[CurlyPhi]", "[", "]"}], ",", 
+     RowBox[{
+      RowBox[{"-", 
+       RowBox[{
+        RowBox[{"CD", "[", 
+         RowBox[{"-", "b"}], "]"}], "@", 
+        RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+      RowBox[{
+       RowBox[{
+        RowBox[{"CD", "[", "b", "]"}], "@", 
+        RowBox[{"\[CurlyPhi]", "[", "]"}]}], "/", "2"}]}]}], "]"}], 
+   RowBox[{"(", 
+    RowBox[{"-", 
+     RowBox[{
+      RowBox[{"CD", "[", 
+       RowBox[{"-", "c"}], "]"}], "@", 
+      RowBox[{
+       RowBox[{"CD", "[", "c", "]"}], "@", 
+       RowBox[{"\[CurlyPhi]", "[", "]"}]}]}]}], ")"}]}]}]], "Input",Expression\
+UUID->"f18ffe77-29a5-4773-826d-032f0946c849"],
+
+Cell["And expand the second term.", "Text",ExpressionUUID->"c2e3e186-d4a9-4120-a162-276432693052"],
+
+Cell[BoxData[
+ RowBox[{"term2exp", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"MyToxPand", "[", 
+      RowBox[{"term2", ",", "\"\<NewtonGauge\>\"", ",", "1"}], "]"}], "/", 
+     RowBox[{"Sqrt", "[", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"Detg", "[", "]"}]}], 
+       RowBox[{
+        RowBox[{"Scalar", "[", 
+         RowBox[{"ah", "[", "]"}], "]"}], "^", "8"}]}], "]"}]}], "//", 
+    "Expand"}], "//", "org"}]}]], "Input",ExpressionUUID->"44fce712-ea99-47a2-\
+9f65-52213c2e46d8"],
+
+Cell["Third term.", "Text",ExpressionUUID->"3a702e57-ea93-4a40-a8bb-828902937ec3"],
+
+Cell[BoxData[
+ RowBox[{"term3", "=", 
+  RowBox[{
+   RowBox[{"Sqrt", "[", 
+    RowBox[{"-", 
+     RowBox[{"Detg", "[", "]"}]}], "]"}], 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"L4", "[", 
+       RowBox[{
+        RowBox[{"\[CurlyPhi]", "[", "]"}], ",", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "b"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{
+           RowBox[{"CD", "[", "b", "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}], "/", "2"}]}]}], "]"}], 
+      RowBox[{"RicciScalarCD", "[", "]"}]}], "+", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{"Derivative", "[", 
+         RowBox[{"0", ",", "1"}], "]"}], "[", "L4", "]"}], "[", 
+       RowBox[{
+        RowBox[{"\[CurlyPhi]", "[", "]"}], ",", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "b"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{
+           RowBox[{"CD", "[", "b", "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}], "/", "2"}]}]}], "]"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Scalar", "[", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "c"}], "]"}], "@", 
+           RowBox[{
+            RowBox[{"CD", "[", "c", "]"}], "@", 
+            RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], "]"}], "^", "2"}], "-", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"CD", "[", 
+           RowBox[{"-", "c"}], "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "b"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{"CD", "[", "c", "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", "b", "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}]}]}], ")"}]}]}], 
+    ")"}]}]}]], "Input",ExpressionUUID->"21517e2d-f24c-466f-8d66-\
+761fc019d4c5"],
+
+Cell["Expansion:", "Text",ExpressionUUID->"996e1b1f-3045-42f5-8aec-b749cec44008"],
+
+Cell[BoxData[
+ RowBox[{"term3exp", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"MyToxPand", "[", 
+      RowBox[{"term3", ",", "\"\<NewtonGauge\>\"", ",", "1"}], "]"}], "/", 
+     RowBox[{"Sqrt", "[", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"Detg", "[", "]"}]}], 
+       RowBox[{
+        RowBox[{"Scalar", "[", 
+         RowBox[{"ah", "[", "]"}], "]"}], "^", "8"}]}], "]"}]}], "//", 
+    "Expand"}], "//", "org"}]}]], "Input",ExpressionUUID->"bbdd1018-41d6-4934-\
+b21b-d2dac7505a30"],
+
+Cell["And final term:", "Text",ExpressionUUID->"84ec5f9c-52ec-4666-bf61-c45cd0f4d909"],
+
+Cell[BoxData[
+ RowBox[{"term4", "=", 
+  RowBox[{
+   RowBox[{"Sqrt", "[", 
+    RowBox[{"-", 
+     RowBox[{"Detg", "[", "]"}]}], "]"}], 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"L5", "[", 
+       RowBox[{
+        RowBox[{"\[CurlyPhi]", "[", "]"}], ",", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "b"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{
+           RowBox[{"CD", "[", "b", "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}], "/", "2"}]}]}], "]"}], 
+      RowBox[{"EinsteinCD", "[", 
+       RowBox[{
+        RowBox[{"-", "b"}], ",", 
+        RowBox[{"-", "c"}]}], "]"}], 
+      RowBox[{
+       RowBox[{"CD", "[", "b", "]"}], "@", 
+       RowBox[{
+        RowBox[{"CD", "[", "c", "]"}], "[", 
+        RowBox[{"\[CurlyPhi]", "[", "]"}], "]"}]}]}], "-", 
+     RowBox[{
+      RowBox[{"1", "/", "6"}], " ", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Derivative", "[", 
+         RowBox[{"0", ",", "1"}], "]"}], "[", "L5", "]"}], "[", 
+       RowBox[{
+        RowBox[{"\[CurlyPhi]", "[", "]"}], ",", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "b"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{
+           RowBox[{"CD", "[", "b", "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}], "/", "2"}]}]}], "]"}], 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"Scalar", "[", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "c"}], "]"}], "@", 
+           RowBox[{
+            RowBox[{"CD", "[", "c", "]"}], "@", 
+            RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], "]"}], "^", "3"}], "-", 
+        RowBox[{"3", 
+         RowBox[{"Scalar", "[", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "c"}], "]"}], "@", 
+           RowBox[{
+            RowBox[{"CD", "[", "c", "]"}], "@", 
+            RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], "]"}], 
+         RowBox[{
+          RowBox[{"CD", "[", 
+           RowBox[{"-", "c"}], "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "b"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{"CD", "[", "c", "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", "b", "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}]}], "+", 
+        RowBox[{"2", 
+         RowBox[{
+          RowBox[{"CD", "[", "c", "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "b"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{"CD", "[", "b", "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "d"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}], 
+         RowBox[{
+          RowBox[{"CD", "[", "d", "]"}], "@", 
+          RowBox[{
+           RowBox[{"CD", "[", 
+            RowBox[{"-", "c"}], "]"}], "@", 
+           RowBox[{"\[CurlyPhi]", "[", "]"}]}]}]}]}], ")"}]}]}], 
+    ")"}]}]}]], "Input",ExpressionUUID->"6168f008-338d-42d2-ad17-\
+bc5cf9071c8a"],
+
+Cell["\<\
+It took my computer 13520 seconds to expand this to second order... Let\
+\[CloseCurlyQuote]s just do first order.\
+\>", "Text",ExpressionUUID->"a27eca30-8725-4003-b3b3-7a9c18648890"],
+
+Cell[BoxData[
+ RowBox[{"term4exp", "=", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"MyToxPand", "[", 
+      RowBox[{"term3", ",", "\"\<NewtonGauge\>\"", ",", "1"}], "]"}], "/", 
+     RowBox[{"Sqrt", "[", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"Detg", "[", "]"}]}], 
+       RowBox[{
+        RowBox[{"Scalar", "[", 
+         RowBox[{"ah", "[", "]"}], "]"}], "^", "8"}]}], "]"}]}], "//", 
+    "Expand"}], "//", "org"}]}]], "Input",ExpressionUUID->"02af3ac8-f702-4969-\
+9f65-950a241dd590"],
+
+Cell["\<\
+If that hasn\[CloseCurlyQuote]t impressed you, then you \
+won\[CloseCurlyQuote]t be happy until you own a personal army of elves that \
+write your papers for you.\
+\>", "Text",ExpressionUUID->"5e5477ec-c209-4723-87d7-a74e295a6481"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Final Words", "Section",ExpressionUUID->"e0ba1e1f-9fec-44ee-9e81-38b2290bd436"],
+
+Cell[TextData[{
+ "In this notebook, I\[CloseCurlyQuote]ve attempted to show you some of the \
+power of xAct. There is LOTS more that it can do that I just haven\
+\[CloseCurlyQuote]t had time to touch on. But that just means there\
+\[CloseCurlyQuote]s lots for you to explore. One thing definitely worth \
+investigating is the optional package TexAct that produces ",
+ Cell[BoxData[
+  FormBox[
+   StyleBox[
+    RowBox[{"L", 
+     StyleBox[
+      AdjustmentBox["A",
+       BoxBaselineShift->-0.4,
+       BoxMargins->{{-0.5, -0.3}, {0, 0}}],
+      FontSize->Smaller], "T", 
+     AdjustmentBox["E",
+      BoxBaselineShift->0.5,
+      BoxMargins->{{-0.3, 0}, {0, 0}}], "X"}],
+    SingleLetterItalics->False], TraditionalForm]],ExpressionUUID->
+  "6aea510b-25d4-4d88-a313-b81eb80d2b17"],
+ " code from xTensor expressions.\n\nGood luck!"
+}], "Text",ExpressionUUID->"e2e6057c-cbbd-4d67-90f5-7e4ae5e44383"]
+}, Open  ]]
+},
+Evaluator->"supreme_kernel",
+WindowSize->{Full, Full},
+WindowMargins->{{58, Automatic}, {Automatic, 30}},
+ShowSelection->True,
+TrackCellChangeTimes->False,
+Magnification:>FEPrivate`If[
+  FEPrivate`Equal[FEPrivate`$VersionNumber, 6.], 1.5, 1.5 Inherited],
+FrontEndVersion->"13.3 for Mac OS X x86 (64-bit) (July 24, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"036b008c-c8bf-4de1-8649-6a51f1a1cdd8"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 1449, 32, 709, "Text",ExpressionUUID->"f2b83a7b-442a-4125-b5ab-38e4a67960b4"],
+Cell[CellGroupData[{
+Cell[2031, 56, 86, 0, 101, "Section",ExpressionUUID->"fa3231f8-87a1-4fa6-b971-00846ca75a42"],
+Cell[2120, 58, 451, 6, 90, "Text",ExpressionUUID->"e29ed6be-d654-405d-b1d7-f63e4dcb1a12"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[2608, 69, 101, 0, 78, "Section",ExpressionUUID->"cf40bfc4-6cc7-476b-961f-fef39a9e8341"],
+Cell[2712, 71, 226, 3, 53, "Text",ExpressionUUID->"0a4d3352-3466-4371-ad59-e7e8c9d79fd9"],
+Cell[2941, 76, 88, 0, 53, "Text",ExpressionUUID->"8a5f6a8f-bc33-41e9-b89b-96d39050678a"],
+Cell[CellGroupData[{
+Cell[3054, 80, 135, 2, 46, "Input",ExpressionUUID->"1e8be33f-c907-4eef-9624-9ab43c5a42cd"],
+Cell[CellGroupData[{
+Cell[3214, 86, 228, 5, 30, "Print",ExpressionUUID->"d576e10e-2f0b-496e-b71e-9a6bf2934630"],
+Cell[3445, 93, 505, 12, 30, "Print",ExpressionUUID->"b799d92d-4e48-4fef-8359-f29dd9c8b2ff"],
+Cell[3953, 107, 249, 5, 30, "Print",ExpressionUUID->"370ec5b4-e846-4aad-b6aa-ff4b6876d075"],
+Cell[4205, 114, 209, 5, 30, "Print",ExpressionUUID->"9adf5fd4-9b30-4d8c-8ed8-efc9fbb39d47"],
+Cell[4417, 121, 189, 4, 30, "Print",ExpressionUUID->"5d557736-8f77-47cc-8799-0dfde94701ab"],
+Cell[4609, 127, 228, 5, 30, "Print",ExpressionUUID->"030d0260-46bd-4b86-bd5b-29ca2335b639"],
+Cell[4840, 134, 515, 13, 30, "Print",ExpressionUUID->"cb609358-ba37-43d6-b956-2ff2ed06bfa6"],
+Cell[5358, 149, 249, 5, 30, "Print",ExpressionUUID->"f15b2072-045d-4ee3-88d2-592fca5334e6"],
+Cell[5610, 156, 228, 5, 30, "Print",ExpressionUUID->"973fa2aa-372b-41e2-be7c-694df53bda81"],
+Cell[5841, 163, 384, 7, 30, "Print",ExpressionUUID->"9565ff05-7bf5-4bbe-9e46-185a537a2335"],
+Cell[6228, 172, 228, 5, 30, "Print",ExpressionUUID->"c90cea73-3576-4322-a647-13737800ab8b"]
+}, Open  ]]
+}, Open  ]],
+Cell[6483, 181, 254, 4, 53, "Text",ExpressionUUID->"6a26fb97-79b8-4f02-83ef-9a3f9d5c781e"],
+Cell[CellGroupData[{
+Cell[6762, 189, 336, 7, 46, "Input",ExpressionUUID->"2d3facef-a6f1-43f8-bc3b-c7c3939226d9"],
+Cell[CellGroupData[{
+Cell[7123, 200, 571, 13, 30, "Print",ExpressionUUID->"eb3a6a91-028a-4bba-9d5e-77b65d6014ae"],
+Cell[7697, 215, 581, 13, 30, "Print",ExpressionUUID->"3c87bb3e-99f2-41a6-98ab-1b845d27e1b4"]
+}, Open  ]]
+}, Open  ]],
+Cell[8305, 232, 646, 9, 122, "Text",ExpressionUUID->"25abbfbd-0d9f-4c76-a6f5-288a5c631344"],
+Cell[CellGroupData[{
+Cell[8976, 245, 343, 9, 46, "Input",ExpressionUUID->"f66c6fce-7986-4bf5-b5ab-ee1e948d2fca"],
+Cell[CellGroupData[{
+Cell[9344, 258, 744, 18, 30, "Print",ExpressionUUID->"3c6dc01d-2ee7-4707-b343-8717893d6c83"],
+Cell[10091, 278, 847, 20, 30, "Print",ExpressionUUID->"421bb71d-e803-4e34-9a07-c1d4d1ec8af7"],
+Cell[10941, 300, 821, 19, 30, "Print",ExpressionUUID->"3eacaa99-dc4c-4e54-86d7-d73bc56180e8"],
+Cell[11765, 321, 839, 19, 30, "Print",ExpressionUUID->"c3c896f7-17fd-4198-aef3-9506a576eec4"],
+Cell[12607, 342, 655, 15, 30, "Print",ExpressionUUID->"1432eb35-68e9-45bb-87bf-b38e9176cee6"],
+Cell[13265, 359, 783, 19, 30, "Print",ExpressionUUID->"5280553d-f20a-4779-8c1e-b07a604ee8ec"],
+Cell[14051, 380, 801, 20, 30, "Print",ExpressionUUID->"200c8f4c-a200-41d4-8ad4-23ac2942bc82"],
+Cell[14855, 402, 827, 20, 30, "Print",ExpressionUUID->"e527a41c-36fd-4db1-aeb1-81238cbfd661"],
+Cell[15685, 424, 744, 18, 30, "Print",ExpressionUUID->"ea9fb568-d99d-4483-9e78-47de8ea38e47"],
+Cell[16432, 444, 237, 5, 30, "Print",ExpressionUUID->"bc6f76da-4d55-4bb9-8ee6-a4afee587559"],
+Cell[16672, 451, 620, 13, 30, "Print",ExpressionUUID->"2fa427e4-0eee-4f47-a138-f57cce1a468c"],
+Cell[17295, 466, 241, 5, 30, "Print",ExpressionUUID->"e98b2e92-e292-4961-b92b-b6fd4254dc04"],
+Cell[17539, 473, 756, 18, 30, "Print",ExpressionUUID->"73bfdc78-1dd5-43d3-b8ce-563144bb074f"],
+Cell[18298, 493, 811, 19, 30, "Print",ExpressionUUID->"6dcf2f17-9298-46a8-beac-2b5706a772ee"],
+Cell[19112, 514, 752, 18, 30, "Print",ExpressionUUID->"1d517aa5-7524-47dd-9e6b-573626899b29"],
+Cell[19867, 534, 636, 14, 30, "Print",ExpressionUUID->"3172894f-71ed-44ee-a1a4-30b2efccb959"],
+Cell[20506, 550, 377, 9, 30, "Print",ExpressionUUID->"a4f7c319-dedc-4569-a92d-c794894c73fa"],
+Cell[20886, 561, 369, 9, 30, "Print",ExpressionUUID->"5c540162-e1fc-4f71-9ee1-7e9514e20e7f"],
+Cell[21258, 572, 381, 9, 30, "Print",ExpressionUUID->"e2659919-b176-427c-bd85-a9a9a45e408b"],
+Cell[21642, 583, 650, 14, 30, "Print",ExpressionUUID->"afe084cf-c163-4151-a926-ca79e7c05272"]
+}, Open  ]]
+}, Open  ]],
+Cell[22319, 601, 228, 3, 53, "Text",ExpressionUUID->"ac1660a8-d7d2-41d4-9c38-d5d804c99f5d"],
+Cell[CellGroupData[{
+Cell[22572, 608, 185, 4, 46, "Input",ExpressionUUID->"78b79359-c4b3-4cb1-9a83-1086eef44bc5"],
+Cell[22760, 614, 1624, 44, 73, "Output",ExpressionUUID->"43f74daf-30c8-432c-9180-d1b87d316974"]
+}, Open  ]],
+Cell[24399, 661, 194, 3, 53, "Text",ExpressionUUID->"3541b591-fa10-4139-9b8f-ec15e0ae101b"],
+Cell[24596, 666, 166, 3, 46, "Input",ExpressionUUID->"ab01e117-2b3b-4b24-beab-dd1d0966b266"],
+Cell[24765, 671, 88, 0, 53, "Text",ExpressionUUID->"fb9632ea-9823-489a-990e-fbf00e6fdd70"],
+Cell[CellGroupData[{
+Cell[24878, 675, 185, 4, 46, "Input",ExpressionUUID->"f11b3ff5-bfc1-4c22-8264-eb7662a20df8"],
+Cell[25066, 681, 1492, 44, 47, "Output",ExpressionUUID->"2c571322-e714-42c5-aadd-afadd40a6f2a"]
+}, Open  ]],
+Cell[26573, 728, 119, 0, 53, "Text",ExpressionUUID->"680642d6-5ac3-41c6-b54a-56670902c7dc"],
+Cell[CellGroupData[{
+Cell[26717, 732, 548, 15, 46, "Input",ExpressionUUID->"af188203-a856-4a17-bc9b-c79a86cf7e5b"],
+Cell[27268, 749, 594, 17, 47, "Output",ExpressionUUID->"400d5826-5627-4f3d-87e8-131eb61e582f"]
+}, Open  ]],
+Cell[27877, 769, 179, 3, 53, "Text",ExpressionUUID->"95e0fabf-2222-4b9b-84c0-878ccc84f626"],
+Cell[CellGroupData[{
+Cell[28081, 776, 138, 2, 46, "Input",ExpressionUUID->"2d8ff8a4-8657-4cd2-a536-d2e4f3842948"],
+Cell[28222, 780, 2173, 70, 73, "Output",ExpressionUUID->"5444c606-9bc8-4fec-8ff6-14c184249aa0"]
+}, Open  ]],
+Cell[30410, 853, 275, 4, 53, "Text",ExpressionUUID->"cd889e75-1e1b-4ecf-bb89-1bebf520643c"],
+Cell[CellGroupData[{
+Cell[30710, 861, 391, 11, 46, "Input",ExpressionUUID->"43759e10-8508-4b87-8d20-309b46615a1d"],
+Cell[31104, 874, 6539, 150, 154, "Output",ExpressionUUID->"1e4cd6ef-cee2-487a-b513-18a568acf511"]
+}, Open  ]],
+Cell[37658, 1027, 209, 3, 53, "Text",ExpressionUUID->"146f0ef0-c360-479b-b024-8ccde34d9299"],
+Cell[CellGroupData[{
+Cell[37892, 1034, 170, 3, 46, "Input",ExpressionUUID->"a26ffa03-fb1b-4718-96a2-88b3db03de82"],
+Cell[38065, 1039, 5296, 139, 204, "Output",ExpressionUUID->"bfb99f9e-3074-4294-b1f4-8f9d59dfda81"]
+}, Open  ]],
+Cell[43376, 1181, 212, 3, 53, "Text",ExpressionUUID->"5f883b03-ce5f-49fa-a8c1-c8ac58b0f4c9"],
+Cell[CellGroupData[{
+Cell[43613, 1188, 368, 10, 46, "Input",ExpressionUUID->"4b9ed95a-ead3-4417-b229-21b52e01857f"],
+Cell[43984, 1200, 409, 12, 47, "Output",ExpressionUUID->"04eb1b5c-fd65-44ea-8afd-ee7ee3c46224"]
+}, Open  ]],
+Cell[44408, 1215, 501, 7, 122, "Text",ExpressionUUID->"935e4164-35dc-41d1-83f4-3cf3fba4db81"],
+Cell[44912, 1224, 115, 1, 46, "Input",ExpressionUUID->"0a5ac9d9-6c4a-481f-a2b3-aec9db4749f6"],
+Cell[45030, 1227, 179, 3, 53, "Text",ExpressionUUID->"27da5afd-97ed-46d9-86e0-6b24b245e34f"],
+Cell[45212, 1232, 509, 15, 78, "Input",ExpressionUUID->"20837e30-321e-4e45-a845-225ea66f9859"],
+Cell[45724, 1249, 361, 7, 122, "Text",ExpressionUUID->"0208c20a-4a57-4641-8511-f5c7b5f68206"],
+Cell[46088, 1258, 120, 1, 46, "Input",ExpressionUUID->"60ed5383-554f-469e-a8c9-7337c1344b38"],
+Cell[46211, 1261, 179, 3, 53, "Text",ExpressionUUID->"6e24ef50-cd45-49e3-b00d-c8657bb7d68a"],
+Cell[46393, 1266, 548, 17, 46, "Input",ExpressionUUID->"1fc6d8f2-bc0c-4a6e-8c54-f299defb8a6c"],
+Cell[46944, 1285, 194, 3, 53, "Text",ExpressionUUID->"47abe83f-0294-4748-9fe4-35c0fdd54940"],
+Cell[47141, 1290, 275, 8, 46, "Input",ExpressionUUID->"c21a4286-c010-420e-9804-474820cb2344"],
+Cell[47419, 1300, 793, 13, 226, "Text",ExpressionUUID->"399e464b-9484-497d-81a3-395aaf40675a"],
+Cell[48215, 1315, 118, 1, 46, "Input",ExpressionUUID->"0b750aae-73e5-4704-98df-c671622f8161"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[48370, 1321, 101, 0, 101, "Section",ExpressionUUID->"2dd6c864-f34f-43de-8596-1f3c731b94a5"],
+Cell[48474, 1323, 141, 2, 53, "Text",ExpressionUUID->"f0e75755-36ef-4c60-acdb-561562dfb016"],
+Cell[48618, 1327, 110, 1, 46, "Input",ExpressionUUID->"d8887650-b94f-451f-8cf3-7551aecf412e"],
+Cell[48731, 1330, 180, 3, 53, "Text",ExpressionUUID->"4e15fd88-23cc-4a58-8073-716b57dd3433"],
+Cell[48914, 1335, 515, 14, 109, "Input",ExpressionUUID->"158aa8d3-d7bd-42dd-8edd-1f0dd2c4d86b"],
+Cell[49432, 1351, 329, 5, 53, "Text",ExpressionUUID->"5b2c9ba0-744f-4ad7-aab0-d8d77b687910"],
+Cell[49764, 1358, 327, 8, 78, "Input",ExpressionUUID->"b6c39f14-1ab5-4880-ae89-c09593f15347"],
+Cell[50094, 1368, 144, 1, 53, "Text",ExpressionUUID->"6aa68c1d-0d8f-4fb6-b7e4-2ff5c5f596ce"],
+Cell[50241, 1371, 218, 6, 46, "Input",ExpressionUUID->"76221f5e-83bc-4dd4-b15b-de5a97f94743"],
+Cell[50462, 1379, 201, 4, 122, "Text",ExpressionUUID->"0765d033-a80d-4fc3-b5b8-fb9150465b2a"],
+Cell[50666, 1385, 396, 11, 78, "Input",ExpressionUUID->"4552c170-3e6a-4c3d-b0ee-da4ef5a2bef9"],
+Cell[51065, 1398, 387, 6, 88, "Text",ExpressionUUID->"e70ffcd9-9728-42a4-877b-be44ecd0b362"],
+Cell[51455, 1406, 121, 1, 46, "Input",ExpressionUUID->"3f64adbb-b1dd-40c1-bf1b-72145ce5d492"],
+Cell[51579, 1409, 206, 5, 122, "Text",ExpressionUUID->"66061633-0a57-4aa9-804e-f92c3d8b0e72"],
+Cell[51788, 1416, 270, 6, 78, "Input",ExpressionUUID->"b1ddd30b-9a11-4156-8cbf-fdd7561cd4be"],
+Cell[52061, 1424, 173, 3, 53, "Text",ExpressionUUID->"57886578-20d0-4d82-89d4-d5bed68a2777"],
+Cell[52237, 1429, 243, 7, 46, "Input",ExpressionUUID->"f44a05b7-c9f0-44e1-9f76-e067ae73ea68"],
+Cell[52483, 1438, 498, 13, 55, "Text",ExpressionUUID->"896d74d4-15e1-485e-960a-74e83ed45230"],
+Cell[52984, 1453, 557, 17, 78, "Input",ExpressionUUID->"932d2cd2-145a-411d-a8d7-01f70c4dc576"],
+Cell[53544, 1472, 166, 2, 53, "Text",ExpressionUUID->"9e16017c-2cdb-4749-8171-83493fbc5f67"],
+Cell[53713, 1476, 305, 8, 46, "Input",ExpressionUUID->"7c21e5c1-ebd7-4786-bf9b-2de8c595334b"],
+Cell[54021, 1486, 383, 5, 88, "Text",ExpressionUUID->"9c3d125c-713c-49fa-b8b5-3f5645fac37c"],
+Cell[54407, 1493, 392, 8, 109, "Input",ExpressionUUID->"92099892-00f0-401c-a4c1-1974284cd293"],
+Cell[54802, 1503, 206, 4, 122, "Text",ExpressionUUID->"b7935b4e-f80d-42d3-8adb-89327771380b"],
+Cell[55011, 1509, 511, 14, 46, "Input",ExpressionUUID->"bf69887f-f93c-4eb0-86aa-e858930cb583"],
+Cell[55525, 1525, 105, 0, 53, "Text",ExpressionUUID->"02231003-37f9-44a8-8885-b18cbb907885"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[55667, 1530, 101, 0, 101, "Section",ExpressionUUID->"c0916175-5e7a-4bd1-860b-8199c66eb729"],
+Cell[55771, 1532, 446, 6, 88, "Text",ExpressionUUID->"ead7f809-7e57-4930-992e-4cbe6ca82727"],
+Cell[56220, 1540, 160, 3, 53, "Text",ExpressionUUID->"361b8039-f9aa-470e-ad5e-704ce019d518"],
+Cell[56383, 1545, 516, 12, 78, "Input",ExpressionUUID->"74e2b4e3-102c-4b41-a144-b8198ab91c97"],
+Cell[56902, 1559, 168, 3, 53, "Text",ExpressionUUID->"074c3fd7-53e9-495e-aa8b-94dfd30c08cd"],
+Cell[57073, 1564, 467, 9, 142, "Input",ExpressionUUID->"1d56a8e5-671a-439c-bea3-3d043f2e399a"],
+Cell[57543, 1575, 120, 0, 53, "Text",ExpressionUUID->"d52a901c-7da6-4e48-b980-3319028f9353"],
+Cell[57666, 1577, 750, 23, 46, "Input",ExpressionUUID->"bff0c0a7-2f16-4c1d-af26-c5da2635ac60"],
+Cell[58419, 1602, 165, 3, 53, "Text",ExpressionUUID->"d32e6644-67d4-4d0b-a265-46b72992e43d"],
+Cell[58587, 1607, 259, 6, 46, "Input",ExpressionUUID->"c0a6fc4e-48d9-49a1-9e56-f5c7c307520a"],
+Cell[58849, 1615, 213, 3, 53, "Text",ExpressionUUID->"43260ed3-1bb9-4ba7-bab6-99edca7a5139"],
+Cell[59065, 1620, 747, 23, 46, "Input",ExpressionUUID->"ab323510-0832-47c7-a738-fb2231512e77"],
+Cell[59815, 1645, 293, 7, 54, "Text",ExpressionUUID->"4da29005-1df7-4d05-8758-b964de38fb4f"],
+Cell[60111, 1654, 1204, 34, 109, "Input",ExpressionUUID->"48d408ea-c0f6-43c5-b218-987ec5c69051"],
+Cell[61318, 1690, 173, 3, 53, "Text",ExpressionUUID->"01dc1083-9e37-4840-af65-502bc09e9dcc"],
+Cell[61494, 1695, 219, 6, 46, "Input",ExpressionUUID->"4dcd7410-3cc0-432f-91cf-0c2d839a17e4"],
+Cell[61716, 1703, 115, 0, 53, "Text",ExpressionUUID->"9c8afadb-b1e0-4aa5-803e-43da6ec080f1"],
+Cell[61834, 1705, 236, 7, 46, "Input",ExpressionUUID->"9f4a6903-6cf9-4f0f-b3be-73fc608f1330"],
+Cell[62073, 1714, 131, 0, 53, "Text",ExpressionUUID->"0ae42359-0448-4bfa-a46d-530884d0c334"],
+Cell[62207, 1716, 385, 11, 46, "Input",ExpressionUUID->"6381e648-68d0-4df9-8dd3-5efda378949b"],
+Cell[62595, 1729, 195, 4, 122, "Text",ExpressionUUID->"b049364d-3458-4056-b3ea-f6cc0ca9926a"],
+Cell[62793, 1735, 1229, 38, 109, "Input",ExpressionUUID->"d93f8763-cd1a-446a-b689-389eea676880"],
+Cell[64025, 1775, 208, 3, 53, "Text",ExpressionUUID->"dee584c5-dcc2-4d1a-8909-f69118f8df59"],
+Cell[64236, 1780, 259, 6, 46, "Input",ExpressionUUID->"48956a2f-9eab-478e-bfcd-53a039176e30"],
+Cell[64498, 1788, 86, 0, 53, "Text",ExpressionUUID->"3c7a4707-1116-44d1-afdc-1d87bb0b2ee9"],
+Cell[64587, 1790, 747, 23, 46, "Input",ExpressionUUID->"5c757037-09ca-442b-8256-8bb3b702450a"],
+Cell[65337, 1815, 86, 0, 53, "Text",ExpressionUUID->"18fd696a-ae87-4394-ba14-de2025c77e85"],
+Cell[65426, 1817, 1204, 34, 109, "Input",ExpressionUUID->"80d3906e-2196-4576-b694-1a46f5cf5ea1"],
+Cell[66633, 1853, 334, 5, 88, "Text",ExpressionUUID->"a0eb5738-c49d-4db6-bc24-f0b74043d327"],
+Cell[66970, 1860, 155, 3, 46, "Input",ExpressionUUID->"118bf183-ae6f-44ca-bc3a-083d206cf9ca"],
+Cell[67128, 1865, 171, 3, 53, "Text",ExpressionUUID->"fb112721-9a60-4bc1-a9d6-af7d0a6f90ff"],
+Cell[67302, 1870, 838, 26, 46, "Input",ExpressionUUID->"75ec0d53-9945-4a85-9ad3-f99a417e75df"],
+Cell[68143, 1898, 259, 6, 46, "Input",ExpressionUUID->"c3d27d88-e474-4d5e-ba54-bbdc199110b9"],
+Cell[68405, 1906, 1093, 31, 78, "Input",ExpressionUUID->"0993a2f8-afbf-469f-861a-ceda27cee182"],
+Cell[69501, 1939, 481, 7, 88, "Text",ExpressionUUID->"0efcf79f-a5e0-4a80-8d74-d4408f984512"],
+Cell[69985, 1948, 1148, 32, 109, "Input",ExpressionUUID->"dabb74a6-748a-4776-a0bd-d57904cfe296"],
+Cell[71136, 1982, 177, 3, 53, "Text",ExpressionUUID->"ecc34fc8-7a2c-4790-b26a-bdb9c52f92d1"],
+Cell[71316, 1987, 386, 10, 78, "Input",ExpressionUUID->"94076523-0f45-4145-b26b-b9180f9e5020"],
+Cell[71705, 1999, 239, 4, 53, "Text",ExpressionUUID->"a304d3cf-ec94-44a8-95e4-56825f4d1382"],
+Cell[71947, 2005, 4342, 130, 233, "Input",ExpressionUUID->"041326fb-0897-461b-8af5-8590f595cc8a"],
+Cell[76292, 2137, 202, 3, 53, "Text",ExpressionUUID->"46624009-4e17-4814-bd46-c27160520bd0"],
+Cell[76497, 2142, 698, 20, 140, "Input",ExpressionUUID->"0f8c0f07-51e7-4bbe-a8c6-e35197012eb2"],
+Cell[77198, 2164, 241, 4, 88, "Text",ExpressionUUID->"8ea86f08-46c2-47a6-a746-ae06fb1ef932"],
+Cell[77442, 2170, 170, 3, 46, "Input",ExpressionUUID->"ed2ac0b8-bb9a-40ea-b788-30a9def57fde"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[77649, 2178, 100, 0, 101, "Section",ExpressionUUID->"b77c9d4b-5e2f-4752-9284-70c2121352c9"],
+Cell[77752, 2180, 380, 5, 66, "Text",ExpressionUUID->"70dff6f1-cd11-4911-b524-c6ce00788698"],
+Cell[78135, 2187, 110, 1, 43, "Input",ExpressionUUID->"613ce0d2-c5db-4f48-aedc-4899aa79ce72"],
+Cell[78248, 2190, 374, 5, 66, "Text",ExpressionUUID->"cbfe64b4-809b-4e45-8b3b-44392bd6f15f"],
+Cell[78625, 2197, 416, 11, 43, "Input",ExpressionUUID->"e2321f57-af40-4bfa-a875-aa0c957f01dd"],
+Cell[79044, 2210, 274, 4, 41, "Text",ExpressionUUID->"3012fe34-835a-42f5-8c20-a9678fe857ef"],
+Cell[79321, 2216, 192, 3, 41, "Text",ExpressionUUID->"5d4a7de7-0af4-4a78-8da6-b8f678cbdeee"],
+Cell[79516, 2221, 1007, 31, 179, "Input",ExpressionUUID->"0aa3a82e-888d-482f-ad01-a33dfb254f6d"],
+Cell[80526, 2254, 117, 0, 41, "Text",ExpressionUUID->"c5774878-96f5-4f57-9266-0b03241497c8"],
+Cell[80646, 2256, 190, 4, 43, "Input",ExpressionUUID->"fdac493a-03a1-41e2-91b7-465ef8be08f8"],
+Cell[80839, 2262, 130, 0, 41, "Text",ExpressionUUID->"3436f148-9dd0-4114-82be-7cfe69a12248"],
+Cell[80972, 2264, 219, 4, 43, "Input",ExpressionUUID->"33217fd6-8c55-42e1-b55b-66ee54f81aa0"],
+Cell[81194, 2270, 278, 4, 66, "Text",ExpressionUUID->"29036522-1602-444b-a1fe-1fc6a1675ff0"],
+Cell[81475, 2276, 209, 5, 43, "Input",ExpressionUUID->"8a2277ce-6d5c-4611-b7ab-66ade23c63aa"],
+Cell[81687, 2283, 365, 11, 43, "Input",ExpressionUUID->"114de60f-585b-4db9-b306-735873872989"],
+Cell[82055, 2296, 240, 4, 66, "Text",ExpressionUUID->"c2907678-43ac-469f-93d2-c10690414951"],
+Cell[82298, 2302, 131, 1, 43, "Input",ExpressionUUID->"c64e1f7d-5cfc-45db-beb0-538af490fea1"],
+Cell[82432, 2305, 233, 6, 43, "Input",ExpressionUUID->"b90f87f5-6c8c-4ce1-b9fd-bd98a62dc7e2"],
+Cell[82668, 2313, 266, 4, 66, "Text",ExpressionUUID->"83cdf231-c31e-40b8-9190-b075e35db60f"],
+Cell[82937, 2319, 309, 9, 43, "Input",ExpressionUUID->"4404bf1e-a996-460c-801a-2b8c16f86d46"],
+Cell[83249, 2330, 89, 0, 41, "Text",ExpressionUUID->"2e1ea897-91fe-49c3-a563-51b608c6a85a"],
+Cell[83341, 2332, 141, 3, 43, "Input",ExpressionUUID->"91945ee8-f5c4-4f0f-83de-a8f8d8195265"],
+Cell[83485, 2337, 122, 0, 41, "Text",ExpressionUUID->"0ba37055-190b-4fd7-8751-465fbd423cea"],
+Cell[83610, 2339, 119, 1, 43, "Input",ExpressionUUID->"6e390e2b-06c3-412e-bd0a-0469118219ab"],
+Cell[83732, 2342, 140, 2, 41, "Text",ExpressionUUID->"5945b405-cae1-4463-9887-ac15c62395f6"],
+Cell[83875, 2346, 112, 1, 43, "Input",ExpressionUUID->"0673232d-b8ca-416d-bb32-531383d33427"],
+Cell[83990, 2349, 99, 0, 41, "Text",ExpressionUUID->"4d6c0c55-55d6-40aa-b010-4aab5051d657"],
+Cell[84092, 2351, 367, 7, 115, "Text",ExpressionUUID->"3294bdc8-fa20-445a-9faa-684cdee86fa7"],
+Cell[84462, 2360, 568, 16, 71, "Input",ExpressionUUID->"bb43ddbc-b24d-428f-9135-f7178bd3c249"],
+Cell[85033, 2378, 87, 0, 41, "Text",ExpressionUUID->"a53c5b78-463c-4b73-9082-adf26ab50339"],
+Cell[85123, 2380, 253, 7, 43, "Input",ExpressionUUID->"aaadbbf8-9675-42ba-bcab-9bc1291792ac"],
+Cell[85379, 2389, 520, 7, 90, "Text",ExpressionUUID->"1536c6fc-40b8-4128-b07e-d8c0cd3f1a56"],
+Cell[85902, 2398, 140, 2, 43, "Input",ExpressionUUID->"5f7c1c3b-8dee-4610-8b1e-d8c11b56135c"],
+Cell[86045, 2402, 416, 11, 43, "Input",ExpressionUUID->"a26e14f1-4c2c-4c5b-bf11-04e1814295ca"],
+Cell[86464, 2415, 167, 3, 41, "Text",ExpressionUUID->"a48a2776-e250-4981-86cf-460bdd8ecc3b"],
+Cell[86634, 2420, 253, 7, 43, "Input",ExpressionUUID->"ea21a430-bc18-4a80-98d7-c2a1441e6895"],
+Cell[86890, 2429, 146, 2, 41, "Text",ExpressionUUID->"3a66848c-5c98-4738-ada7-26dd01704892"],
+Cell[87039, 2433, 115, 1, 43, "Input",ExpressionUUID->"cc0e6eff-af16-4ace-a6a8-c9bad46a62f3"]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[87191, 2439, 111, 0, 78, "Section",ExpressionUUID->"5c2fba75-a450-429e-bd22-9704a7b13ad2"],
+Cell[87305, 2441, 452, 6, 122, "Text",ExpressionUUID->"b1c45177-d26c-4967-a299-e65b4b5f0a51"],
+Cell[87760, 2449, 107, 1, 46, "Input",ExpressionUUID->"9fd2ef08-7678-4155-935b-dd933c9a4d86"],
+Cell[87870, 2452, 129, 2, 46, "Input",ExpressionUUID->"077d0c8f-ff14-4668-a818-8685eb628b1d"],
+Cell[88002, 2456, 247, 4, 88, "Text",ExpressionUUID->"9d567e5e-c2c0-4656-b24b-4acf669de4e7"],
+Cell[88252, 2462, 711, 22, 80, "Input",ExpressionUUID->"acad5882-6e0d-4eaf-b046-816b16a0aa9a"],
+Cell[88966, 2486, 539, 7, 157, "Text",ExpressionUUID->"130c75ad-12b8-4a52-96d3-a889aeec758e"],
+Cell[89508, 2495, 330, 8, 49, "Input",ExpressionUUID->"901f6a1f-1802-41a5-93d5-a8dfa023c767"],
+Cell[89841, 2505, 225, 3, 53, "Text",ExpressionUUID->"a306c35c-bd25-4c9b-9feb-6b14e362ace9"],
+Cell[90069, 2510, 302, 7, 78, "Input",ExpressionUUID->"6792012d-60fa-4857-9707-a94bbf069f4d"],
+Cell[90374, 2519, 146, 2, 53, "Text",ExpressionUUID->"269daa83-d3c9-424e-b817-13d271622f5b"],
+Cell[90523, 2523, 460, 11, 78, "Input",ExpressionUUID->"290437ce-874b-4228-af27-0bafa01129df"],
+Cell[90986, 2536, 172, 3, 53, "Text",ExpressionUUID->"6b825dc6-c473-42f8-94c7-f2f72a58a58a"],
+Cell[91161, 2541, 326, 8, 46, "Input",ExpressionUUID->"a8440ea8-0f0c-4fd2-ab27-c84739a0d273"],
+Cell[91490, 2551, 127, 0, 53, "Text",ExpressionUUID->"b1894352-aae3-4b10-a650-daa36ac31ee6"],
+Cell[91620, 2553, 325, 8, 46, "Input",ExpressionUUID->"5004d574-39af-4522-a2dd-9d997912a0d5"],
+Cell[91948, 2563, 108, 0, 53, "Text",ExpressionUUID->"028662f1-c5d0-48ab-86e5-80a94e6b8aae"],
+Cell[92059, 2565, 344, 10, 46, "Input",ExpressionUUID->"782227dc-7f1f-48b4-869b-60bbd8b8fe35"],
+Cell[92406, 2577, 189, 3, 53, "Text",ExpressionUUID->"19e8c096-d6e2-49ef-8f96-ec0b756c1832"],
+Cell[92598, 2582, 111, 1, 46, "Input",ExpressionUUID->"49503d83-537f-46a4-a1f3-5b602acc192d"],
+Cell[92712, 2585, 164, 3, 53, "Text",ExpressionUUID->"051d0171-ead8-4bc2-9a51-dd30dc9dd468"],
+Cell[92879, 2590, 262, 6, 78, "Input",ExpressionUUID->"2b25d66c-0f7c-44fc-a24e-5b554999560f"],
+Cell[93144, 2598, 105, 0, 53, "Text",ExpressionUUID->"5bb5d6f1-1500-4c2a-b5bc-81b46995c170"],
+Cell[93252, 2600, 353, 10, 46, "Input",ExpressionUUID->"6bdd50a6-a07d-4806-a9ef-9edb10631af9"],
+Cell[93608, 2612, 119, 0, 53, "Text",ExpressionUUID->"b0fa808b-5c23-4f86-b961-784912eaed02"],
+Cell[93730, 2614, 239, 6, 46, "Input",ExpressionUUID->"a5819e9d-c6e3-477c-b2d4-ca157db798df"],
+Cell[93972, 2622, 220, 3, 53, "Text",ExpressionUUID->"23e228b0-e393-4add-8b50-c3e57361d887"],
+Cell[94195, 2627, 448, 12, 46, "Input",ExpressionUUID->"a0b6c0a1-da24-4d6b-8597-41a5ca60fa9e"],
+Cell[94646, 2641, 157, 2, 53, "Text",ExpressionUUID->"92417aac-30e5-4d1a-a779-34fc50477c5d"],
+Cell[94806, 2645, 121, 1, 46, "Input",ExpressionUUID->"a4a7ef2d-a540-47f9-a715-5439c21c0c93"],
+Cell[94930, 2648, 435, 12, 46, "Input",ExpressionUUID->"3d2cfa6e-d621-48d9-9130-f096d364dda9"],
+Cell[95368, 2662, 147, 2, 53, "Text",ExpressionUUID->"e13194f0-b0b2-4ed6-bb6f-f75cd7c18bee"],
+Cell[95518, 2666, 437, 6, 88, "Text",ExpressionUUID->"fcba4988-49c2-4cd7-b9b1-981e08087527"],
+Cell[95958, 2674, 345, 5, 140, "Input",ExpressionUUID->"ad46f330-41b7-4509-a451-221e792e77d3"],
+Cell[96306, 2681, 93, 0, 53, "Text",ExpressionUUID->"455a8291-215c-4ec1-8e5c-f9a1b348b7bb"],
+Cell[96402, 2683, 603, 20, 46, "Input",ExpressionUUID->"af4041ac-05c0-46e3-97b6-aea7cb1839dc"],
+Cell[97008, 2705, 304, 5, 88, "Text",ExpressionUUID->"daa11c7e-9889-4c86-87f3-62d71e0316e1"],
+Cell[97315, 2712, 506, 15, 46, "Input",ExpressionUUID->"21a8f2b0-25ab-40a7-aa40-298a5c822885"],
+Cell[97824, 2729, 94, 0, 53, "Text",ExpressionUUID->"ffa51209-e754-4b65-9f93-d8185b79943f"],
+Cell[97921, 2731, 829, 27, 46, "Input",ExpressionUUID->"f18ffe77-29a5-4773-826d-032f0946c849"],
+Cell[98753, 2760, 98, 0, 53, "Text",ExpressionUUID->"c2e3e186-d4a9-4120-a162-276432693052"],
+Cell[98854, 2762, 506, 15, 46, "Input",ExpressionUUID->"44fce712-ea99-47a2-9f65-52213c2e46d8"],
+Cell[99363, 2779, 82, 0, 53, "Text",ExpressionUUID->"3a702e57-ea93-4a40-a8bb-828902937ec3"],
+Cell[99448, 2781, 2078, 64, 140, "Input",ExpressionUUID->"21517e2d-f24c-466f-8d66-761fc019d4c5"],
+Cell[101529, 2847, 81, 0, 53, "Text",ExpressionUUID->"996e1b1f-3045-42f5-8aec-b749cec44008"],
+Cell[101613, 2849, 506, 15, 46, "Input",ExpressionUUID->"bbdd1018-41d6-4934-b21b-d2dac7505a30"],
+Cell[102122, 2866, 86, 0, 53, "Text",ExpressionUUID->"84ec5f9c-52ec-4666-bf61-c45cd0f4d909"],
+Cell[102211, 2868, 3289, 99, 202, "Input",ExpressionUUID->"6168f008-338d-42d2-ad17-bc5cf9071c8a"],
+Cell[105503, 2969, 192, 3, 53, "Text",ExpressionUUID->"a27eca30-8725-4003-b3b3-7a9c18648890"],
+Cell[105698, 2974, 506, 15, 46, "Input",ExpressionUUID->"02af3ac8-f702-4969-9f65-950a241dd590"],
+Cell[106207, 2991, 241, 4, 53, "Text",ExpressionUUID->"5e5477ec-c209-4723-87d7-a74e295a6481"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[106485, 3000, 85, 0, 78, "Section",ExpressionUUID->"e0ba1e1f-9fec-44ee-9e81-38b2290bd436"],
+Cell[106573, 3002, 897, 21, 158, "Text",ExpressionUUID->"e2e6057c-cbbd-4d67-90f5-7e4ae5e44383"]
+}, Open  ]]
+}
+]
+*)
+
